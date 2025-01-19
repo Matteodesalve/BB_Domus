@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Domine:wght@400..700&family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&display=swap');
+/* Contenitore del form */
+.login-form-container {
+    position: relative;
+    background: rgba(245, 235, 224, 0.9); /* Colore #f5ebe0 con trasparenza */
+    padding: 1rem 1rem 3rem;  /* Non toccato */
+    border-radius: 16px;      /* Non toccato */
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    
+    min-width: 320px;
+    max-width: 360px;
+    margin: 0 auto;
+    
+    /* Mantenendo flex, ma il contenuto parte dall'alto */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* da center a flex-start */
+    align-items: center;
+}
+
+/* Titolo */
+.login-form h2 {
+    /* Aggiungiamo un margine in alto per abbassare visivamente tutto il blocco */
+    margin-top: 2.5rem; 
+    margin-bottom: 1.4rem;   /* eventualmente 0 se non vuoi ulteriore spazio sotto */
+    font-size: 1.8rem;
+    font-family: "Cinzel Decorative", serif;
+    font-weight: bold;
+    color: #333;
+}
+
+
+.login-form input {
+    width: 80%;
+    padding: 0.8rem;
+    font-size: 1rem;
+    font-family: "Domine", "serif";
+    border: 2px solid #d6ccc2;
+    border-radius: 8px;
+    outline: none;
+    background-color: #edede9;
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 1rem; /* Aggiunta di spazio tra un input e l’altro */
+}
+
+
+/* Effetto al focus */
+.login-form input:focus {
+    border-color: #d6ccc2; /* Colore #d6ccc2 */
+    box-shadow: 0 0 8px rgba(214, 204, 194, 0.5); /* Luminosità al focus */
+}
+
+/* Stile del bottone */
+.login-form button {
+    margin-top: 1rem;
+    width: 30%; /* Adattato alla larghezza del form */
+    height: 20%;
+    text-align: center;
+    font-size: 1.3rem;
+    font-family: "Playfair", "serif";
+    font-weight: bold;
+    color: #fff;
+    background: rgb(62, 56, 49); /* Colore principale #d6ccc2 */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+/* Effetto al hover */
+.login-form button:hover {
+    background: rgb(184, 151, 116); /* Cambia colore al hover */
+    color: #333; /* Cambia colore del testo */
+    transform: scale(1.05); /* Leggero zoom */
+    box-shadow: 0 4px 15px rgba(214, 204, 194, 0.3); /* Ombreggiatura più visibile */
+}
+
+/* Effetto al click */
+.login-form button:active {
+    background: #f5ebe0; /* Colore più chiaro al click */
+    transform: scale(0.98); /* Leggero rimpicciolimento */
+}
+
+/* Messaggio di errore */
+.login-form .error-message {
+    margin-top: 1rem;
+    color: #e63946; /* Rosso chiaro per messaggi di errore */
+    font-size: 0.9rem;
+    font-weight: bold;
+}

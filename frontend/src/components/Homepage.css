@@ -1,0 +1,167 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Domine:wght@400..700&family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&display=swap');
+
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: rgba(255, 239, 221, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    width: 100vw;
+    text-align: center;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: relative;
+  }
+  
+  body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("/Domus-Mariani_74_9022.jpg") no-repeat center center/cover;
+    filter: blur(2px);
+    z-index: -1;
+  }
+  
+  .home-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    padding: 20px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  h1 {
+    font-size: 32px;
+    color: #333;
+    margin: 0;
+    position: relative;
+    top: 0;
+    left: 0;
+    transform: none;
+    font-family: "Cinzel Decorative", serif;
+  }
+  
+  .card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    width: 100%;
+  }
+  
+  .card {
+    width: 100%;
+    max-width: 250px;
+    padding: 20px;
+    background: rgb(62, 56, 49);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    text-align: center;
+    cursor: pointer;
+  }
+  
+  .card img {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 15px;
+  }
+  
+  .card:first-child img {
+    width: 120px;
+    height: 120px;
+    margin-left: 25px;
+  }
+
+  .card:nth-child(2) img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .card:nth-child(3) img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .card-title {
+    font-size: 20px;
+    color: #ffffff;
+    margin-bottom: 10px;
+    font-family: "Playfair", serif;
+  }
+  
+  .card-description {
+    font-size: 16px;
+    color: #ffffff;
+    font-family: "Domine", serif;
+  }
+  
+  .card:hover {
+    background: rgb(132, 103, 72);
+    transform: scale(1.05);
+  }
+  
+  .card.active {
+    background: rgb(132, 103, 72);
+  }
+
+  .logout-button {
+    padding: 15px 30px;
+    font-size: 22px;
+    color: #ffffff;
+    background: rgb(62, 56, 49);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 20px;
+    font-family: "Playfair", serif;
+  }
+  
+  .logout-button:hover {
+    background: rgb(132, 103, 72);
+    transform: scale(1.05);
+  }
+  
+  
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+  
+    .card-container {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .card {
+      width: 80%;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
+  
+    .card {
+      width: 100%;
+    }
+  }
+  
+  
+/* rgb(232, 192, 150); rgb(132, 103, 72)*/  
