@@ -9,7 +9,7 @@ const PORT = 5174;
 app.use(cors());
 app.use(express.json());
 
-// Rotte
+// Rotte per interfacciarsi con il frontend
 app.use("/api/auth", authRoutes);
 
 // Avvia il server
