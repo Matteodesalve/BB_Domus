@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const authRoutes = require("./routes/auth");
+const bookingRoutes = require("./routes/booking");
 
 const app = express();
 const PORT = 5174;
@@ -11,6 +12,7 @@ app.use(express.json());
 
 // Rotte per interfacciarsi con il frontend
 app.use("/api/auth", authRoutes);
+app.use("/api/booking", bookingRoutes);
 
 // Avvia il server
 app.listen(PORT, () => {

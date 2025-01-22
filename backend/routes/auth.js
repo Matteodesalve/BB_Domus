@@ -2,8 +2,8 @@ const express = require("express");
 const { authenticateUser } = require("../services/authService");
 const router = express.Router();
 
-export const isAuthenticated = () => {
-  // Controlla se l'utente è autenticato (ad esempio tramite token nel localStorage)
+// Funzione di autenticazione da spostare nel frontend, non nel backend
+const isAuthenticated = () => {
   return localStorage.getItem("authToken") !== null;
 };
 
@@ -24,8 +24,5 @@ router.post("/logout", (req, res) => {
   res.clearCookie("sessionToken"); // Cancella il cookie di sessione
   res.status(200).json({ message: "Logout effettuato con successo" });
 });
-
-
-
 
 module.exports = router;

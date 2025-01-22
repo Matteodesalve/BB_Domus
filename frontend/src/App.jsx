@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from "react-router-dom";
 import HomePage from "./components/Homepage";
 import LoginPage from "./components/LoginPage";
+import SummarySection from "./components/SummarySection";
 import ProtectedRoute from "./components/protectedRoutes";
 import { isAuthenticated } from "./utils/Auth";
 
@@ -38,7 +39,16 @@ function App() {
           <ProtectedRoute>
             <HomePage />
           </ProtectedRoute>
-        }
+        } 
+      />
+      
+      <Route 
+        path="/summary" 
+        element={
+          <ProtectedRoute>
+              <SummarySection />
+          </ProtectedRoute>
+        } 
       />
 
       {/* Reindirizzamento a home o login per qualsiasi altro percorso */}

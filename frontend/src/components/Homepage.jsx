@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Route, useNavigate } from "react-router-dom";
 import "./Homepage.css";
 import summaryIcon from "../assets/summary_icon.png";
 import cashIcon from "../assets/icon_cash.png";
@@ -44,6 +44,7 @@ const HomePage = () => {
       title: "Riepilogo",
       description: "Visualizza il riepilogo delle tue spese e utenze.",
       image: summaryIcon,
+      route: "/summary",
     },
     {
       id: 2,
@@ -69,6 +70,7 @@ const HomePage = () => {
             className={`card ${hoveredCard === card.id ? "active" : ""}`}
             onMouseEnter={() => setHoveredCard(card.id)}
             onMouseLeave={() => setHoveredCard(null)}
+            onClick={() => navigate(card.route)}
           >
             <img src={card.image} alt={card.title} className="card-image" />
             <h3 className="card-title">{card.title}</h3>
