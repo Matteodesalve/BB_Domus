@@ -28,33 +28,41 @@ const saveBooking = async (room, subRoom, date, bookingData) => {
   }
 };
 
-// Funzione per ottenere le prenotazioni di una camera
 const getBookings = async (room, subRoom) => {
   try {
-    let subRoomRef;
+      let bookings = [];
 
-    if (room === "Robinie" && (subRoom === "Trevi" || subRoom === "S.Peter")) {
-      subRoomRef = db.collection("prenotazioni").doc(room).collection(subRoom);
-    } else {
-      subRoomRef = db.collection("prenotazioni").doc(room).collection("appartamento");
-    }
+      if (room === "Robinie" && subRoom === "all") {
+          const treviSnapshot = await db.collection("prenotazioni").doc(room).collection("Trevi").get();
+          const speterSnapshot = await db.collection("prenotazioni").doc(room).collection("S.Peter").get();
+          console.log(treviSnapshot, speterSnapshot);
 
-    const bookingsSnapshot = await subRoomRef.get();
+          treviSnapshot.forEach(doc => {
+              bookings.push({ id: doc.id, ...doc.data(), roomType: "Trevi" });
+          });
 
-    if (bookingsSnapshot.empty) {
-      return { success: false, message: "Nessuna prenotazione trovata" };
-    }
+          speterSnapshot.forEach(doc => {
+              bookings.push({ id: doc.id, ...doc.data(), roomType: "S.Peter" });
+          });
+      } else {
+          const subRoomRef = db.collection("prenotazioni").doc(room).collection(subRoom);
+          const snapshot = await subRoomRef.get();
 
-    const bookings = [];
-    bookingsSnapshot.forEach(doc => {
-      bookings.push({ id: doc.id, ...doc.data() });
-    });
+          snapshot.forEach(doc => {
+              bookings.push({ id: doc.id, ...doc.data() });
+          });
+      }
 
-    return { success: true, data: bookings };
+      if (bookings.length === 0) {
+          return { success: false, message: "Nessuna prenotazione trovata" };
+      }
+
+      return { success: true, data: bookings };
   } catch (error) {
-    console.error("Errore durante il recupero delle prenotazioni:", error);
-    return { success: false, message: error.message };
+      console.error("Errore durante il recupero delle prenotazioni:", error);
+      return { success: false, message: error.message };
   }
 };
+
 
 module.exports = { saveBooking, getBookings };

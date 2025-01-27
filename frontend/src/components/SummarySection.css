@@ -22,7 +22,7 @@ button {
     color: #000; /* Testo nero */
     border-radius: 5px;
     cursor: pointer;
-    transition: background 0.5s ease-in-out, transform 0.3s ease-in-out;
+    transition: background 0.7s ease-in-out, transform 0.7s ease-in-out;
 }
 
 button.active {

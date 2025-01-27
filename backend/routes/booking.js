@@ -23,16 +23,18 @@ router.post("/save", async (req, res) => {
 // Endpoint per ottenere le prenotazioni
 router.get("/get", async (req, res) => {
   const { room, subRoom } = req.query;
-
+  
   if (!room || !subRoom) {
-    return res.status(400).json({ success: false, message: "Parametri insufficienti" });
+      return res.status(400).json({ success: false, message: "Parametri insufficienti" });
   }
 
   const result = await getBookings(room, subRoom);
+  console.log("Dati recuperati:", result);
+
   if (result.success) {
-    res.status(200).json(result);
+      res.status(200).json(result);
   } else {
-    res.status(404).json(result);
+      res.status(404).json(result);
   }
 });
 
