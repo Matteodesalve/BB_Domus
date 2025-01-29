@@ -8,6 +8,8 @@ const SummarySection = () => {
     const [selectedMonth, setSelectedMonth] = useState(0);
     const [selectedDate, setSelectedDate] = useState(null);
     const [showPopup, setShowPopup] = useState(false);
+    const [selectedDates, setSelectedDates] = useState(new Set());
+
 
     const initialBookingData = {
         firstName: "",
@@ -65,8 +67,10 @@ const SummarySection = () => {
 
     const handleDayClick = (date) => {
         setSelectedDate(date);
+        setSelectedDates((prevDates) => new Set(prevDates.add(date.toDateString()))); // Memorizza la data
         handlePopupOpen();
     };
+    
 
     const handlePopupOpen = () => {
         setShowPopup(true);
@@ -76,8 +80,18 @@ const SummarySection = () => {
     const handlePopupClose = () => {
         setBookingData(initialBookingData);
         setShowPopup(false);
-        document.body.classList.remove("no-scroll"); // Riabilita lo scroll della pagina
+        document.body.classList.remove("no-scroll");
+    
+        // Rimuove la selezione dal calendario
+        setSelectedDates((prevDates) => {
+            const newDates = new Set(prevDates);
+            newDates.delete(selectedDate.toDateString());
+            return newDates;
+        });
+    
+        setSelectedDate(null); // Resetta la data selezionata
     };
+    
 
     const calculateTouristTax = () => {
         const { exemption, birthDate, stayEndDate } = bookingData;
@@ -171,7 +185,16 @@ const SummarySection = () => {
                         onChange={handleDayClick}
                         value={selectedDate}
                         activeStartDate={selectedDate}
-                        tileClassName={() => ""}
+                        tileClassName={({ date, view }) => {
+                            const today = new Date();
+                            const isToday = date.toDateString() === today.toDateString();
+                    
+                            if (view === "month") {
+                                return isToday ? "current-day" : "reset-cell"; // Resetta tutte le celle tranne il giorno corrente
+                            }
+                    
+                            return "";
+                        }}
                     />
                 </div>
             )}

@@ -1,3 +1,4 @@
+/* Miglioramenti generali */
 .summary-container {
     text-align: center;
     padding: 20px;
@@ -7,6 +8,7 @@ body.no-scroll {
     overflow: hidden;
 }
 
+/* Bottoni migliorati per mesi e camere */
 .room-buttons, .month-buttons {
     display: flex;
     justify-content: center;
@@ -16,85 +18,116 @@ body.no-scroll {
 }
 
 button {
-    padding: 10px 20px;
+    padding: 12px 25px;
     border: none;
-    background: rgb(182, 155, 130); /* Marroncino chiaro per i non selezionati */
-    color: #000; /* Testo nero */
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.7s ease-in-out, transform 0.7s ease-in-out;
-}
-
-button.active {
-    background: rgb(132, 103, 72);
-}
-
-.booking-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    margin-top: 20px;
-}
-
-input, select {
-    padding: 10px;
-    width: 100%;
-    max-width: 250px;
-}
-
-.popup label {
-    display: block;
-    text-align: center;
-    width: 100%;
+    background: linear-gradient(135deg, #b69982, #a07f5b);
+    color: #fff;
     font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease-in-out;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+    outline: none; /* Rimuove il bordo di default */
+}
+
+/* Rimuove il bordo in qualsiasi stato */
+button:focus, button:hover, button:active {
+    outline: none !important;
+    border: none !important;
+}
+
+/* Effetto hover */
+button:hover {
+    background: linear-gradient(135deg, #9a7353, #8a5f3d);
+    transition: 0.3s ease-in-out;
+    transform: translateY(-2px);
+}
+
+/* Effetto click */
+button:active {
+    transform: translateY(0);
+}
+
+/* Stile attivo (bottone selezionato, es. Gennaio di default) */
+button.active {
+    background: linear-gradient(135deg, #7b4f33, #5e3822);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+/* Selezione camera */
+.room-selection {
+    display: flex;
+    flex-direction: column; /* Posiziona i bottoni sotto il testo */
+    align-items: center;
+    gap: 10px; /* Aggiunge spazio tra il testo e i bottoni */
     margin-top: 10px;
 }
 
-button:hover {
-    background: rgb(162, 133, 108);
-    transform: scale(1.03);
+.room-selection label {
+    font-weight: bold;
+    color: #333;
 }
 
-.calendar-container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
+/* Contenitore dei bottoni */
+.room-selection .button-group {
+    display: flex;
+    gap: 15px; /* Aumenta la distanza tra i bottoni */
+    justify-content: center;
 }
 
-.react-calendar {
-    width: 100%;
-    max-width: 100%;
-    font-size: 1.5rem;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    font-family: Arial, sans-serif;
-    overflow: hidden;
-}
-
-.react-calendar__navigation {
-    display: none;
-}
-
-.react-calendar__tile {
+/* Bottoni delle camere */
+.room-selection .room-button {
+    width: 100px;  /* Imposta una larghezza fissa per entrambi */
+    height: 40px;  /* Imposta un'altezza fissa per uniformità */
+    padding: 8px 0; /* Uniforma il padding interno */
+    border: none;
+    border-radius: 8px;
+    background: #ddd;
     color: #000;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px; /* Aggiunge spazio tra i bottoni e il testo sottostante */
 }
 
-.react-calendar__tile--holiday {
-    background: red;
-    color: #fff;
+.room-selection .room-button:hover {
+    background: #bbb;
+    transform: translateY(-2px);
 }
 
-.react-calendar__tile--available {
-    background: yellow;
-    color: #000;
+
+.room-selection .room-button:active {
+    transform: translateY(0);
 }
 
-.react-calendar__month-view__days__day--neighboringMonth {
-    visibility: hidden;
+/* Effetto attivo per le camere */
+.room-selection .room-button.selected-trevi {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
 }
 
+.room-selection .room-button.selected-speter {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+}
+
+/* Hover sugli attivi per un effetto glow */
+.room-selection .room-button.selected-trevi:hover {
+    box-shadow: 0 0 10px rgba(231, 76, 60, 0.8);
+}
+
+.room-selection .room-button.selected-speter:hover {
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.8);
+}
+
+/* Media query per migliorare la responsività */
 @media (max-width: 768px) {
     .room-buttons, .month-buttons {
         flex-direction: column;
@@ -122,7 +155,81 @@ button:hover {
     }
 }
 
-/* Stili del popup */
+/* Ingrandire il calendario a tutta la larghezza */
+.calendar-container {
+    width: 90%;
+    max-width: none;
+    margin: 0 auto;
+}
+
+/* Stili aggiornati per il calendario */
+.react-calendar {
+    width: 100%;
+    max-width: 100%;
+    font-size: 1.5rem;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
+
+/* Rimuovere la navigazione superiore (cambio mese) */
+.react-calendar__navigation {
+    display: none;
+}
+
+/* Imposta il colore predefinito delle celle */
+.react-calendar__tile {
+    background: #ffffff !important; /* Grigio chiaro fisso */
+    color: #000;
+    padding: 20px;
+    font-size: 1.2rem;
+    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
+    border-radius: 2px;
+}
+
+/* Mantiene il colore al passaggio del mouse senza cambiarlo */
+.react-calendar__tile:hover {
+    background: #e0e0e0 !important; /* Leggermente più scuro in hover */
+    cursor: pointer;
+}
+
+/* Giorno corrente sempre giallo */
+.react-calendar__tile.current-day {
+    background: #ffeb3b !important;
+    color: #000;
+    font-weight: bold;
+}
+
+/* Mantiene il giorno corrente giallo anche al passaggio del mouse */
+.react-calendar__tile.current-day:hover {
+    background: #ffcf31 !important;
+}
+
+/* Rimuove il focus blu quando si clicca */
+.react-calendar__tile:focus {
+    outline: none !important;
+    background: #f0f0f0 !important;
+}
+
+
+
+
+
+
+/* Festivi in rosso */
+.react-calendar__month-view__days__day:nth-child(7n), /* Domenica */
+.react-calendar__month-view__days__day:nth-child(7n-1) { /* Sabato */
+    color: red !important;
+}
+
+/* Giorni del mese precedente/successivo nascosti */
+.react-calendar__month-view__days__day--neighboringMonth {
+    visibility: hidden;
+}
+
+/* Overlay del popup: mantiene il centro anche con scrollbar */
 .popup-overlay {
     position: fixed;
     top: 0;
@@ -133,9 +240,12 @@ button:hover {
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 20px; /* Previene tagli sui bordi */
     z-index: 1000;
+    overflow: hidden; /* Evita scrollbar sull'overlay */
 }
 
+/* Stili migliorati per il popup */
 .popup {
     background: #fff;
     padding: 20px;
@@ -144,24 +254,24 @@ button:hover {
     text-align: center;
     width: 400px;
     max-width: 90%;
-    max-height: 90vh;
-    overflow-y: auto; /* Scroll solo per il popup */
+    max-height: 85vh; /* Evita overflow verticale */
+    overflow-y: auto; /* Scroll solo se necessario */
+    overflow-x: hidden; /* Evita scrollbar orizzontale */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.popup h3 {
-    margin-bottom: 20px;
-    color: #333;
-}
-
-.popup input, .popup select {
+/* Rimuove eventuali margini extra tra elementi */
+.popup h3, 
+.popup input, 
+.popup select, 
+.popup button {
     width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    box-sizing: border-box; /* Evita overflow dovuto a padding */
 }
 
-/* Bottoni del popup */
+/* Pulsanti nel popup */
 .popup button {
     background: rgb(62, 56, 49);
     color: white;
@@ -169,15 +279,25 @@ button:hover {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin: 5px;
+    margin-top: 10px;
     transition: background 0.3s ease-in-out;
+    width: auto; /* Impedisce che i bottoni occupino tutto lo spazio */
 }
 
 .popup button:hover {
     background: rgb(132, 103, 72);
 }
 
-/* Stile del bottone Salva Prenotazione */
+/* Correzione per input e select */
+.popup input, .popup select {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Bottone "Salva Prenotazione" */
 .save-button {
     background: rgb(62, 56, 49);
     color: white;
@@ -185,8 +305,9 @@ button:hover {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin: 5px;
+    margin-top: 10px;
     transition: background 0.3s ease-in-out;
+    width: auto;
 }
 
 .save-button:hover {
@@ -199,53 +320,10 @@ button:hover {
     cursor: not-allowed;
 }
 
-/* Assicura che il colore non cambi al passaggio del mouse se disabilitato */
 .save-button.disabled:hover {
     background: #ccc;
 }
 
-/* Allineamento del costo soggiorno */
-.cost-input {
-    text-align: right;
-    padding-right: 10px;
-}
-
-/* Stili per la selezione della camera Robinie */
-.room-selection {
-    text-align: center;
-    margin-top: 15px;
-    font-weight: bold;
-    color: #333;
-}
-
-.room-selection .button-group {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 10px;
-}
-
-.room-selection .room-button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    background: #ccc;  /* Colore grigio iniziale */
-    color: #000;
-    cursor: pointer;
-    font-size: 16px;
-    transition: all 0.3s ease-in-out;
-}
-
-.room-selection .room-button:hover {
-    background: #bbb;
-}
-
-.room-selection .room-button.selected-trevi {
-    background: red;
-    color: white;
-}
-
-.room-selection .room-button.selected-speter {
-    background: blue;
-    color: rgb(255, 255, 255);
+.cost-container{
+    width: 100%;
 }
