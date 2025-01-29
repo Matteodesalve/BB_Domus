@@ -74,4 +74,31 @@ const getBookings = async (room, subRoom) => {
   }
 };
 
-module.exports = { saveBooking, getBookings };
+// Funzione per eliminare una prenotazione
+const deleteBooking = async (room, subRoom, bookingId) => {
+  try {
+      let subRoomPath;
+
+      if (room === "Robinie" && (subRoom === "Trevi" || subRoom === "S.Peter")) {
+          subRoomPath = db.collection("prenotazioni").doc(room).collection(subRoom).doc(bookingId);
+      } else {
+          subRoomPath = db.collection("prenotazioni").doc(room).collection("appartamento").doc(bookingId);
+      }
+
+      // Controlla se la prenotazione esiste
+      const existingDoc = await subRoomPath.get();
+      if (!existingDoc.exists) {
+          return { success: false, message: "Prenotazione non trovata" };
+      }
+
+      // Elimina la prenotazione
+      await subRoomPath.delete();
+
+      return { success: true, message: "Prenotazione eliminata con successo" };
+  } catch (error) {
+      console.error("❌ Errore durante la cancellazione della prenotazione:", error);
+      return { success: false, message: error.message };
+  }
+};
+
+module.exports = { saveBooking, getBookings, deleteBooking };

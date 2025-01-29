@@ -1,5 +1,5 @@
 const express = require("express");
-const { saveBooking, getBookings } = require("../services/bookingService");
+const { saveBooking, getBookings, deleteBooking } = require("../services/bookingService");
 
 const router = express.Router();
 
@@ -37,5 +37,34 @@ router.get("/get", async (req, res) => {
       res.status(404).json(result);
   }
 });
+
+console.log("🔹 Registrazione route: DELETE /api/bookings/delete");
+
+router.delete("/delete", async (req, res) => {
+    console.log("🔹 DELETE ricevuto con questi parametri:", req.query);
+
+    const { room, subRoom, bookingId } = req.query; // 👈 Usa req.query, non req.body
+
+    if (!room || !subRoom || !bookingId) {
+        console.log("❌ Parametri mancanti!");
+        return res.status(400).json({ success: false, message: "Dati insufficienti per la cancellazione" });
+    }
+
+    try {
+        const result = await deleteBooking(room, subRoom, bookingId);
+        console.log("🔹 Risultato eliminazione:", result);
+
+        if (result.success) {
+            return res.status(200).json(result);
+        } else {
+            return res.status(400).json(result);
+        }
+    } catch (error) {
+        console.error("❌ Errore nella cancellazione della prenotazione:", error);
+        return res.status(500).json({ success: false, message: "Errore del server" });
+    }
+});
+
+
 
 module.exports = router;

@@ -26,7 +26,9 @@ app.use((req, res, next) => {
 
 // ✅ Registra le route
 app.use("/api/auth", authRoutes);
-app.use("/api/bookings", bookingRoutes); // ✅ Assicurati che sia "bookings" al plurale
+console.log("✅ Route registrate: /api/bookings");
+app.use("/api/bookings", bookingRoutes);
+
 
 // ✅ Avvia il server
 app.listen(PORT, () => {

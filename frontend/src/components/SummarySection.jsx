@@ -82,14 +82,36 @@ const SummarySection = () => {
         }
     };
 
-    const handleDeleteBooking = async (bookingId) => {
+
+    const handleDeleteBooking = async (bookingId, room, subRoom) => {
         try {
-            await fetch(`/api/bookings/${bookingId}`, { method: "DELETE" });
-            fetchBookings();
+            console.log("🔹 Invio DELETE per", { bookingId, room, subRoom });
+    
+            const response = await fetch(`http://localhost:5174/api/bookings/delete?room=${room}&subRoom=${subRoom}&bookingId=${bookingId}`, {
+                method: "DELETE",
+            });
+    
+            if (!response.ok) {
+                const errorMessage = await response.text();
+                throw new Error(`Errore HTTP: ${response.status} - ${errorMessage}`);
+            }
+    
+            const result = await response.json();
+            console.log("✅ Risposta DELETE:", result);
+    
+            if (result.success) {
+                alert("Prenotazione eliminata con successo!");
+                fetchBookings();
+            } else {
+                alert("Errore nell'eliminazione: " + result.message);
+            }
         } catch (error) {
-            console.error("Errore nella cancellazione:", error);
+            console.error("❌ Errore nella cancellazione:", error);
         }
     };
+    
+    
+
 
     const handleShowDetails = (booking) => {
         setSelectedBooking(booking);
@@ -404,7 +426,17 @@ const SummarySection = () => {
                                     )}
                                     <div className="booking-actions">
                                         <button className="edit-button">Modifica</button>
-                                        <button className="delete-button" onClick={() => handleDeleteBooking(booking.id)}>Cancella</button>
+                                        <button
+                                            className="delete-button"
+                                            onClick={(event) => {
+                                                event.stopPropagation(); // 🔹 Blocca la propagazione del click alla riga
+                                                handleDeleteBooking(booking.id, selectedRoom, selectedRoom === "Robinie" ? booking.roomType : "appartamento");
+                                            }}
+                                        >
+                                            Cancella
+                                        </button>
+
+
                                     </div>
                                 </div>
                             );
@@ -418,8 +450,8 @@ const SummarySection = () => {
                     <div className="popup popup-readonly">
                         <h3>Dettagli prenotazione</h3>
                         <div className="name-fields">
-                            <input type="text" value={selectedBooking.firstName} readOnly disabled/>
-                            <input type="text" value={selectedBooking.lastName} readOnly disabled/>
+                            <input type="text" value={selectedBooking.firstName} readOnly disabled />
+                            <input type="text" value={selectedBooking.lastName} readOnly disabled />
                         </div>
                         <label>Data di nascita</label>
                         <input type="date" value={selectedBooking.birthDate} readOnly disabled />
@@ -428,21 +460,21 @@ const SummarySection = () => {
                         <input type="text" value={selectedBooking.id} readOnly disabled />
 
                         <label>Data di fine soggiorno</label>
-                        <input type="text" value={selectedBooking.stayEndDate} readOnly disabled/>
+                        <input type="text" value={selectedBooking.stayEndDate} readOnly disabled />
 
                         <label>Esenzione</label>
                         <input type="text" value={selectedBooking.exemption} readOnly disabled />
 
                         <label>Tassa di soggiorno</label>
-                        <input type="text" value={selectedBooking.touristTax + " €"} readOnly disabled/>
+                        <input type="text" value={selectedBooking.touristTax + " €"} readOnly disabled />
 
                         <label>Costo totale</label>
-                        <input type="text" value={selectedBooking.stayCost} readOnly disabled/>
+                        <input type="text" value={selectedBooking.stayCost} readOnly disabled />
 
                         {selectedRoom === "Robinie" && (
                             <>
                                 <label>Camera</label>
-                                <input type="text" value={selectedBooking.roomType} readOnly disabled/>
+                                <input type="text" value={selectedBooking.roomType} readOnly disabled />
                             </>
                         )}
 
