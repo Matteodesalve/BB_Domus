@@ -297,6 +297,18 @@ button.active {
     border-radius: 5px;
 }
 
+/* ❌ Il popup di riepilogo è NON MODIFICABILE */
+.popup-readonly input {
+    background: #f9f9f9; /* Sfondo grigio */
+    color: #333;
+    cursor: default;
+}
+
+.popup input[readOnly] {
+    color: #333;
+    cursor: default;
+}
+
 /* Bottone "Salva Prenotazione" */
 .save-button {
     background: rgb(62, 56, 49);
@@ -326,4 +338,114 @@ button.active {
 
 .cost-container{
     width: 100%;
+}
+
+/* Contenitore moderno con scrollbar */
+.booking-container {
+    width: 90%;
+    height: 300px; /* Altezza fissa con scrollbar */
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow-y: auto; /* Scroll verticale */
+    margin: 20px auto;
+    padding: 10px;
+}
+
+/* Lista delle prenotazioni */
+.booking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Stile base per la riga della prenotazione */
+.booking-row {
+    display: flex;
+    cursor: pointer; /* Indica che la riga è cliccabile */
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+/* Effetto hover */
+.booking-row:hover {
+    background: rgba(200, 200, 200, 0.3); /* Grigio chiaro */
+    transform: scale(1.02); /* Effetto di leggero ingrandimento */
+    cursor: pointer;
+}
+
+.booking-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Stile delle icone */
+.icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* Ultima riga senza bordo */
+.booking-row:last-child {
+    border-bottom: none;
+}
+
+/* Stili per i testi delle prenotazioni */
+.booking-date,
+.booking-end,
+.booking-people,
+.booking-cost,
+.booking-tax,
+.booking-room {
+    flex: 1;
+    text-align: center;
+}
+
+/* Pulsanti */
+.booking-actions {
+    display: flex;
+    gap: 10px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.edit-button,
+.delete-button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 14px;
+}
+
+.edit-button {
+    background: #3498db;
+    color: white;
+}
+
+.edit-button:hover {
+    background: #2980b9;
+}
+
+.delete-button {
+    background: #e74c3c;
+    color: white;
+}
+
+.delete-button:hover {
+    background: #c0392b;
+}
+
+/* Stile per nessuna prenotazione */
+.no-bookings {
+    text-align: center;
+    font-size: 18px;
+    color: #777;
+    padding: 20px;
 }

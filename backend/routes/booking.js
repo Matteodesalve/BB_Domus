@@ -6,7 +6,7 @@ const router = express.Router();
 // Endpoint per salvare una prenotazione
 router.post("/save", async (req, res) => {
   const { room, subRoom, date, bookingData } = req.body;
-  console.log(req.body);
+  console.log("📌 Dati ricevuti per il salvataggio:", req.body);
 
   if (!room || !subRoom || !date || !bookingData) {
     return res.status(400).json({ success: false, message: "Dati insufficienti" });
@@ -29,7 +29,7 @@ router.get("/get", async (req, res) => {
   }
 
   const result = await getBookings(room, subRoom);
-  console.log("Dati recuperati:", result);
+  console.log("📌 Prenotazioni recuperate:", result);
 
   if (result.success) {
       res.status(200).json(result);
