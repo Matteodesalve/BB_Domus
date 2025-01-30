@@ -81,7 +81,15 @@ const SummarySection = () => {
 
             if (result.success) {
                 alert("Prenotazione eliminata con successo!");
-                fetchBookings();
+
+                // 🔹 Rimuove subito la prenotazione eliminata per un aggiornamento istantaneo
+                setBookings(prevBookings => prevBookings.filter(booking => booking.id !== bookingId));
+
+                // 🔹 Attendi 500ms prima di ricaricare le prenotazioni per evitare dati vuoti
+                setTimeout(() => {
+                    fetchBookings(selectedRoom, selectedRoom === "Robinie" ? "all" : "appartamento", selectedMonth);
+                }, 500);
+
             } else {
                 alert("Errore nell'eliminazione: " + result.message);
             }
@@ -89,6 +97,8 @@ const SummarySection = () => {
             console.error("❌ Errore nella cancellazione:", error);
         }
     };
+
+
 
     return (
         <div className="summary-container">
@@ -98,7 +108,12 @@ const SummarySection = () => {
             <h2>Seleziona un mese</h2>
             <MonthSelection selectedMonth={selectedMonth} onSelectMonth={handleMonthClick} />
 
-            <BookingCalendar selectedDate={selectedDate} onDayClick={handleDayClick} />
+            <BookingCalendar
+                selectedDate={selectedDate}
+                onDayClick={handleDayClick}
+                bookings={bookings} // 🔹 Passiamo le prenotazioni
+            />
+
 
             <h2>Prenotazioni del mese</h2>
             <BookingList
@@ -115,6 +130,7 @@ const SummarySection = () => {
                     setShowPopup={setShowPopup}
                     selectedRoom={selectedRoom}
                     setBookings={setBookings}
+                    bookings={bookings}
                 />
             )}
 

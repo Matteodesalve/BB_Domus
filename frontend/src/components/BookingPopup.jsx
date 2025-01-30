@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const BookingPopup = ({ selectedDate, setShowPopup, selectedRoom, setBookings }) => {
+const BookingPopup = ({ selectedDate, setShowPopup, selectedRoom, setBookings, bookings }) => {
     const initialBookingData = {
         firstName: "",
         lastName: "",
@@ -15,18 +15,27 @@ const BookingPopup = ({ selectedDate, setShowPopup, selectedRoom, setBookings })
 
     const [bookingData, setBookingData] = useState(initialBookingData);
     const [isFormValid, setIsFormValid] = useState(false);
+    const [disabledRooms, setDisabledRooms] = useState({ Trevi: false, SPeter: false });
 
     useEffect(() => {
         validateForm();
     }, [bookingData]);
 
+    useEffect(() => {
+        if (selectedDate && bookings) {
+            checkRoomAvailability();
+        }
+    }, [selectedDate, bookings]);
+
+
     const validateForm = () => {
-        const { firstName, lastName, birthDate, stayEndDate, stayCost } = bookingData;
+        const { firstName, lastName, birthDate, stayEndDate, stayCost, roomType } = bookingData;
         setIsFormValid(
             firstName.trim() !== "" &&
             lastName.trim() !== "" &&
             birthDate &&
             stayEndDate &&
+            roomType !== "" &&
             /^\d*\.?\d{0,2} €$/.test(stayCost.trim())
         );
     };
@@ -41,6 +50,31 @@ const BookingPopup = ({ selectedDate, setShowPopup, selectedRoom, setBookings })
         }
         if (nights === 0) return 0;
         return (nights * 6) - 0.25;
+    };
+
+    const checkRoomAvailability = () => {
+        if (selectedRoom !== "Robinie") return;
+
+        let treviOccupied = false;
+        let speterOccupied = false;
+
+        bookings.forEach((booking) => {
+            const checkInDate = new Date(booking.id);
+            const checkOutDate = new Date(booking.stayEndDate);
+            checkOutDate.setDate(checkOutDate.getDate() - 1);
+            checkInDate.setDate(checkInDate.getDate() - 1);
+
+            // Se il giorno selezionato è all'interno di una prenotazione esistente
+            if (selectedDate >= checkInDate && selectedDate < checkOutDate) {
+                if (booking.roomType === "Trevi") treviOccupied = true;
+                if (booking.roomType === "S.Peter") speterOccupied = true;
+            }
+        });
+
+        setDisabledRooms({ Trevi: treviOccupied, SPeter: speterOccupied });
+
+        // Debug: controlla se i bottoni vengono disabilitati correttamente
+        console.log("🔹 Stato disabledRooms aggiornato:", { Trevi: treviOccupied, SPeter: speterOccupied });
     };
 
     const handleInputChange = (e) => {
@@ -98,8 +132,20 @@ const BookingPopup = ({ selectedDate, setShowPopup, selectedRoom, setBookings })
                     <div className="room-selection">
                         <label>Seleziona camera</label>
                         <div className="button-group">
-                            <button className={`room-button ${bookingData.roomType === "Trevi" ? "selected-trevi" : ""}`} onClick={() => setBookingData({ ...bookingData, roomType: "Trevi" })}>Trevi</button>
-                            <button className={`room-button ${bookingData.roomType === "S.Peter" ? "selected-speter" : ""}`} onClick={() => setBookingData({ ...bookingData, roomType: "S.Peter" })}>S.Peter</button>
+                            <button
+                                className={`room-button ${bookingData.roomType === "Trevi" ? "selected-trevi" : ""} ${disabledRooms.Trevi ? "disabled" : ""}`}
+                                onClick={() => setBookingData({ ...bookingData, roomType: "Trevi" })}
+                                disabled={disabledRooms.Trevi} // 🔹 Disabilita il bottone se necessario
+                            >
+                                Trevi
+                            </button>
+                            <button
+                                className={`room-button ${bookingData.roomType === "S.Peter" ? "selected-speter" : ""} ${disabledRooms.SPeter ? "disabled" : ""}`}
+                                onClick={() => setBookingData({ ...bookingData, roomType: "S.Peter" })}
+                                disabled={disabledRooms.SPeter} // 🔹 Disabilita il bottone se necessario
+                            >
+                                S.Peter
+                            </button>
                         </div>
                     </div>
                 )}

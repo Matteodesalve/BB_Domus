@@ -127,6 +127,17 @@ button.active {
     box-shadow: 0 0 10px rgba(52, 152, 219, 0.8);
 }
 
+/* Disabilita i bottoni delle camere già occupate */
+.room-selection .room-button.disabled {
+    background: #ccc !important;
+    color: #777 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+    box-shadow: none !important;
+    border: 1px solid #bbb;
+}
+
+
 /* Media query per migliorare la responsività */
 @media (max-width: 768px) {
     .room-buttons, .month-buttons {
@@ -213,11 +224,6 @@ button.active {
     background: #f0f0f0 !important;
 }
 
-
-
-
-
-
 /* Festivi in rosso */
 .react-calendar__month-view__days__day:nth-child(7n), /* Domenica */
 .react-calendar__month-view__days__day:nth-child(7n-1) { /* Sabato */
@@ -227,6 +233,32 @@ button.active {
 /* Giorni del mese precedente/successivo nascosti */
 .react-calendar__month-view__days__day--neighboringMonth {
     visibility: hidden;
+}
+
+/* Stili per occupazione camere */
+.react-calendar__tile.red {
+    background-color: rgba(255, 0, 0, 0.6) !important;
+    color: white !important;
+}
+
+.react-calendar__tile.blue {
+    background-color: rgba(0, 0, 255, 0.6) !important;
+    color: white !important;
+}
+
+.react-calendar__tile.half-red-blue {
+    background: linear-gradient(to right, rgba(255, 0, 0, 0.6) 50%, rgba(0, 0, 255, 0.6) 50%) !important;
+    color: white;
+    cursor: not-allowed;
+}
+
+/* Disabilita il pulsante nei giorni in cui entrambe le camere sono già prenotate */
+.react-calendar__tile.disabled {
+    pointer-events: none; /* Evita il click */
+    color: white !important;
+    font-weight: bold;
+    cursor: not-allowed;
+    opacity: 0.6; /* Rende visivamente grigio */
 }
 
 /* Overlay del popup: mantiene il centro anche con scrollbar */
