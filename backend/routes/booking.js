@@ -22,21 +22,21 @@ router.post("/save", async (req, res) => {
 
 // Endpoint per ottenere le prenotazioni
 router.get("/get", async (req, res) => {
-  const { room, subRoom } = req.query;
-  
-  if (!room || !subRoom) {
-      return res.status(400).json({ success: false, message: "Parametri insufficienti" });
+  const { room, subRoom, month } = req.query;
+
+  if (!room || !subRoom || month === undefined) {
+      return res.status(400).json({ success: false, message: "Dati mancanti" });
   }
 
-  const result = await getBookings(room, subRoom);
-  console.log("📌 Prenotazioni recuperate:", result);
-
-  if (result.success) {
-      res.status(200).json(result);
-  } else {
-      res.status(404).json(result);
+  try {
+      const selectedMonth = parseInt(month, 10);
+      const result = await getBookings(room, subRoom, selectedMonth);
+      res.json(result);
+  } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
   }
 });
+
 
 console.log("🔹 Registrazione route: DELETE /api/bookings/delete");
 

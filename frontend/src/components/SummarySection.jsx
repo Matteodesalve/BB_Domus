@@ -17,6 +17,11 @@ const SummarySection = () => {
     const [bookings, setBookings] = useState([]); // Stato per le prenotazioni
     const [selectedDates, setSelectedDates] = useState(new Set());
     const [selectedBooking, setSelectedBooking] = useState(null);
+    const [loading, setLoading] = useState(false);
+    let fetchTimeout = null; // Variabile per il debounce
+    const [isFetching, setIsFetching] = useState(false);
+    const [fetchTimestamp, setFetchTimestamp] = useState(0);
+
 
     const initialBookingData = {
         firstName: "",
@@ -45,9 +50,6 @@ const SummarySection = () => {
         validateForm();
     }, [bookingData]);
 
-    useEffect(() => {
-        fetchBookings();
-    }, [selectedRoom, selectedMonth]);
 
     const validateForm = () => {
         const { firstName, lastName, birthDate, stayEndDate, stayCost } = bookingData;
@@ -65,40 +67,75 @@ const SummarySection = () => {
         }
     };
 
-    const fetchBookings = async () => {
+    const fetchBookings = async (room, subRoom, month) => {
         try {
-            const response = await fetch(`http://localhost:5174/api/bookings/get?room=${selectedRoom}&subRoom=${selectedRoom === "Robinie" ? "all" : "appartamento"}`);
+            if (isFetching) {
+                console.log("⏳ Una richiesta è già in corso, evitando chiamata duplicata...");
+                return;
+            }
+
+            setIsFetching(true); // Imposta lo stato di caricamento
+            setBookings([]); // Svuota la lista per evitare dati vecchi
+
+            const timestamp = Date.now();
+            setFetchTimestamp(timestamp);
+
+            console.log("🔹 Richiesta GET per", { room, month });
+
+            const response = await fetch(
+                `http://localhost:5174/api/bookings/get?room=${room}&subRoom=${subRoom}&month=${month}`
+            );
 
             if (!response.ok) {
-                const errorMessage = await response.text(); // ✅ Leggi l'errore come testo
+                const errorMessage = await response.text();
                 throw new Error(`Errore HTTP: ${response.status} - ${errorMessage}`);
             }
 
             const data = await response.json();
-            console.log("📌 Prenotazioni ricevute:", data); // ✅ Debug
-            setBookings(data.bookings || []);
+
+            // Controlla se il timestamp attuale è ancora il più recente
+            if (timestamp >= fetchTimestamp) {
+                console.log("📌 Prenotazioni ricevute:", data);
+                setBookings(data.bookings || []);
+            } else {
+                console.log("❌ Ignorata risposta vecchia (richiesta sovrascritta)");
+            }
         } catch (error) {
             console.error("❌ Errore nel recupero delle prenotazioni:", error);
+        } finally {
+            setIsFetching(false);
         }
     };
+
+
+    useEffect(() => {
+        // Creiamo una funzione asincrona per garantire che lo stato sia aggiornato
+        const fetchData = async () => {
+            await fetchBookings(selectedRoom, selectedRoom === "Robinie" ? "all" : "appartamento", selectedMonth);
+        };
+
+        fetchData();
+    }, [selectedRoom, selectedMonth]);
+
+
 
 
     const handleDeleteBooking = async (bookingId, room, subRoom) => {
         try {
             console.log("🔹 Invio DELETE per", { bookingId, room, subRoom });
-    
+
             const response = await fetch(`http://localhost:5174/api/bookings/delete?room=${room}&subRoom=${subRoom}&bookingId=${bookingId}`, {
                 method: "DELETE",
             });
-    
+
             if (!response.ok) {
                 const errorMessage = await response.text();
                 throw new Error(`Errore HTTP: ${response.status} - ${errorMessage}`);
             }
-    
+
             const result = await response.json();
             console.log("✅ Risposta DELETE:", result);
-    
+
             if (result.success) {
                 alert("Prenotazione eliminata con successo!");
                 fetchBookings();
@@ -109,8 +146,8 @@ const SummarySection = () => {
             console.error("❌ Errore nella cancellazione:", error);
         }
     };
-    
-    
+
+
 
 
     const handleShowDetails = (booking) => {
@@ -120,14 +157,19 @@ const SummarySection = () => {
 
     const handleRoomSelection = (room) => {
         setSelectedRoom(room);
-        setSelectedMonth(0);
+        if (room == "Cremera") {
+            setSelectedMonth(0);
+        }
     };
 
     const handleMonthClick = (index) => {
-        setSelectedMonth(index);
         const currentYear = new Date().getFullYear();
-        setSelectedDate(new Date(currentYear, index, 1));
+        const newDate = new Date(currentYear, index, 1); // Primo giorno del mese selezionato
+
+        setSelectedMonth(index);
+        setSelectedDate(newDate);  // ✅ Aggiorna la data del calendario
     };
+
 
     const handleDayClick = (date) => {
         setSelectedDate(date);
@@ -259,13 +301,13 @@ const SummarySection = () => {
                     <Calendar
                         onChange={handleDayClick}
                         value={selectedDate}
-                        activeStartDate={selectedDate}
+                        activeStartDate={selectedDate}  // ✅ Si aggiorna quando cambia il mese
                         tileClassName={({ date, view }) => {
                             const today = new Date();
                             const isToday = date.toDateString() === today.toDateString();
 
                             if (view === "month") {
-                                return isToday ? "current-day" : "reset-cell"; // Resetta tutte le celle tranne il giorno corrente
+                                return isToday ? "current-day" : "reset-cell";
                             }
 
                             return "";
@@ -385,65 +427,72 @@ const SummarySection = () => {
             )}
             {/* Nuova sezione: Prenotazioni del mese */}
             <h2>Prenotazioni del mese</h2>
-            <div className="booking-container">
-                {bookings.length === 0 ? (
-                    <p className="no-bookings">Nessuna prenotazione per questo mese.</p>
-                ) : (
-                    <div className="booking-list">
-                        {bookings.map((booking) => {
-                            const formatDate = (dateString) => {
-                                const date = new Date(dateString);
-                                return date.toLocaleDateString("it-IT", { day: "2-digit", month: "2-digit" });
-                            };
+            {isFetching ? (
+                <div className="loading-container">
+                    <p>Caricamento prenotazioni...</p>
+                </div>
+            ) : (
+                <div className="booking-container">
+                    {bookings.length === 0 ? (
+                        <p className="no-bookings">Nessuna prenotazione per questo mese.</p>
+                    ) : (
+                        <div className="booking-list">
+                            {bookings.map((booking) => {
+                                const formatDate = (dateString) => {
+                                    const date = new Date(dateString);
+                                    return date.toLocaleDateString("it-IT", { day: "2-digit", month: "2-digit" });
+                                };
 
-                            return (
-                                <div key={booking.id} className="booking-row" onClick={() => handleShowDetails(booking)}>
-                                    <span className="booking-field">
-                                        <img src={check_in_icon} alt="Data" className="icon" />
-                                        {formatDate(booking.id)}
-                                    </span>
-                                    <span className="booking-field">
-                                        <img src={check_out_icon} alt="Fine soggiorno" className="icon" />
-                                        {formatDate(booking.stayEndDate)}
-                                    </span>
-                                    <span className="booking-field">
-                                        <img src={person_icon} alt="Persone" className="icon" />
-                                        1
-                                    </span>
-                                    <span className="booking-field">
-                                        <img src={tax_icon} alt="Tassa soggiorno" className="icon" />
-                                        {booking.touristTax + " €"}
-                                    </span>
-                                    <span className="booking-field">
-                                        <img src={money_icon} alt="Costo totale" className="icon" />
-                                        {booking.stayCost}
-                                    </span>
-                                    {selectedRoom === "Robinie" && (
+                                return (
+                                    <div key={booking.id} className="booking-row" onClick={() => handleShowDetails(booking)}>
                                         <span className="booking-field">
-                                            <img src={room_icon} alt="Camera" className="icon" />
-                                            {booking.roomType}
+                                            <img src={check_in_icon} alt="Data" className="icon" />
+                                            {formatDate(booking.id)}
                                         </span>
-                                    )}
-                                    <div className="booking-actions">
-                                        <button className="edit-button">Modifica</button>
-                                        <button
-                                            className="delete-button"
-                                            onClick={(event) => {
-                                                event.stopPropagation(); // 🔹 Blocca la propagazione del click alla riga
-                                                handleDeleteBooking(booking.id, selectedRoom, selectedRoom === "Robinie" ? booking.roomType : "appartamento");
-                                            }}
-                                        >
-                                            Cancella
-                                        </button>
+                                        <span className="booking-field">
+                                            <img src={check_out_icon} alt="Fine soggiorno" className="icon" />
+                                            {formatDate(booking.stayEndDate)}
+                                        </span>
+                                        <span className="booking-field">
+                                            <img src={person_icon} alt="Persone" className="icon" />
+                                            1
+                                        </span>
+                                        <span className="booking-field">
+                                            <img src={tax_icon} alt="Tassa soggiorno" className="icon" />
+                                            {booking.touristTax + " €"}
+                                        </span>
+                                        <span className="booking-field">
+                                            <img src={money_icon} alt="Costo totale" className="icon" />
+                                            {booking.stayCost}
+                                        </span>
+                                        {selectedRoom === "Robinie" && (
+                                            <span className="booking-field">
+                                                <img src={room_icon} alt="Camera" className="icon" />
+                                                {booking.roomType}
+                                            </span>
+                                        )}
+                                        <div className="booking-actions">
+                                            <button className="edit-button">Modifica</button>
+                                            <button
+                                                className="delete-button"
+                                                onClick={(event) => {
+                                                    event.stopPropagation(); // 🔹 Blocca la propagazione del click alla riga
+                                                    handleDeleteBooking(booking.id, selectedRoom, selectedRoom === "Robinie" ? booking.roomType : "appartamento");
+                                                }}
+                                            >
+                                                Cancella
+                                            </button>
 
-
+                                        </div>
                                     </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                )}
-            </div>
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
+            )}
+
+
 
             {selectedBooking && (
                 <div className="popup-overlay">
