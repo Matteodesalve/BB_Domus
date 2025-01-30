@@ -148,8 +148,6 @@ const SummarySection = () => {
     };
 
 
-
-
     const handleShowDetails = (booking) => {
         setSelectedBooking(booking);
     };
