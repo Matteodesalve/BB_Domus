@@ -17,6 +17,13 @@ const SummarySection = () => {
     const [isFetching, setIsFetching] = useState(false);
     const [fetchTimestamp, setFetchTimestamp] = useState(0);
 
+    const [calendarKey, setCalendarKey] = useState(0);
+
+    useEffect(() => {
+        // 🔄 Forza il ricaricamento del calendario ogni volta che le prenotazioni cambiano
+        setCalendarKey((prevKey) => prevKey + 1);
+    }, [bookings, selectedRoom, selectedMonth]);
+
     const fetchBookings = async (room, subRoom, month) => {
         try {
             if (isFetching) return;
@@ -34,8 +41,18 @@ const SummarySection = () => {
             if (!response.ok) throw new Error(`Errore HTTP: ${response.status}`);
 
             const data = await response.json();
+            const formattedBookings = (data.bookings || []).map(booking => ({
+                ...booking,
+                stayEndDate: booking.stayEndDate ? new Date(booking.stayEndDate) : null,
+                guests: booking.guests ? booking.guests.map(guest => ({
+                    firstName: guest.firstName || "",
+                    lastName: guest.lastName || "",
+                    birthDate: guest.birthDate ? new Date(guest.birthDate) : null,
+                })) : [{ firstName: "", lastName: "", birthDate: null }, { firstName: "", lastName: "", birthDate: null }],
+            }));
+
             if (timestamp >= fetchTimestamp) {
-                setBookings(data.bookings || []);
+                setBookings(formattedBookings);
             }
         } catch (error) {
             console.error("Errore nel recupero delle prenotazioni:", error);
@@ -43,6 +60,12 @@ const SummarySection = () => {
             setIsFetching(false);
         }
     };
+
+    useEffect(() => {
+        if (!showPopup) {
+            setSelectedDate(new Date(new Date().getFullYear(), selectedMonth, 1));
+        }
+    }, [selectedMonth, showPopup]);  // 🔹 Aggiorna la data quando chiudi il popup
 
     useEffect(() => {
         fetchBookings(selectedRoom, selectedRoom === "Robinie" ? "all" : "appartamento", selectedMonth);
@@ -55,7 +78,7 @@ const SummarySection = () => {
 
     const handleMonthClick = (index) => {
         setSelectedMonth(index);
-        setSelectedDate(new Date(new Date().getFullYear(), index, 1));
+        setSelectedDate(new Date(new Date().getFullYear(), index, 1)); // 🔹 Imposta sempre il primo giorno del mese
     };
 
     const handleDayClick = (date) => {
@@ -89,7 +112,6 @@ const SummarySection = () => {
                 setTimeout(() => {
                     fetchBookings(selectedRoom, selectedRoom === "Robinie" ? "all" : "appartamento", selectedMonth);
                 }, 500);
-
             } else {
                 alert("Errore nell'eliminazione: " + result.message);
             }
@@ -97,8 +119,6 @@ const SummarySection = () => {
             console.error("❌ Errore nella cancellazione:", error);
         }
     };
-
-
 
     return (
         <div className="summary-container">
@@ -112,8 +132,9 @@ const SummarySection = () => {
                 selectedDate={selectedDate}
                 onDayClick={handleDayClick}
                 bookings={bookings} // 🔹 Passiamo le prenotazioni
+                selectedMonth={selectedMonth}
+                selectedRoom={selectedRoom}
             />
-
 
             <h2>Prenotazioni del mese</h2>
             <BookingList
@@ -122,7 +143,6 @@ const SummarySection = () => {
                 setSelectedBooking={setSelectedBooking}
                 handleDeleteBooking={handleDeleteBooking}
             />
-
 
             {showPopup && (
                 <BookingPopup

@@ -18,50 +18,56 @@ const BookingList = ({ bookings, selectedRoom, setSelectedBooking, handleDeleteB
                 <p className="no-bookings">Nessuna prenotazione per questo mese.</p>
             ) : (
                 <div className="booking-list">
-                    {bookings.map((booking) => (
-                        <div key={booking.id} className="booking-row" onClick={() => setSelectedBooking(booking)}>
-                            <span className="booking-field">
-                                <img src={check_in_icon} alt="Data" className="icon" />
-                                {formatDate(booking.id)}
-                            </span>
-                            <span className="booking-field">
-                                <img src={check_out_icon} alt="Fine soggiorno" className="icon" />
-                                {formatDate(booking.stayEndDate)}
-                            </span>
-                            <span className="booking-field">
-                                <img src={person_icon} alt="Persone" className="icon" />
-                                1
-                            </span>
-                            <span className="booking-field">
-                                <img src={tax_icon} alt="Tassa soggiorno" className="icon" />
-                                {booking.touristTax + " €"}
-                            </span>
-                            <span className="booking-field">
-                                <img src={money_icon} alt="Costo totale" className="icon" />
-                                {booking.stayCost}
-                            </span>
-                            {selectedRoom === "Robinie" && (
+                    {bookings.map((booking) => {
+                        // 🔹 Verifica il numero di ospiti basandosi sui campi firstName
+                        const numberOfGuests = booking.guests && 
+                            booking.guests.length === 2 &&
+                            booking.guests[0].firstName.trim() !== "" &&
+                            booking.guests[1].firstName.trim() !== "" ? 2 : 1;
+
+                        return (
+                            <div key={booking.id} className="booking-row" onClick={() => setSelectedBooking(booking)}>
                                 <span className="booking-field">
-                                    <img src={room_icon} alt="Camera" className="icon" />
-                                    {booking.roomType}
+                                    <img src={check_in_icon} alt="Data" className="icon" />
+                                    {formatDate(booking.id)}
                                 </span>
-                            )}
-                            <div className="booking-actions">
-                                <button className="edit-button">Modifica</button>
-                                <button
-                                    className="delete-button"
-                                    onClick={(event) => {
-                                        event.stopPropagation(); // 🔹 Evita che il click si propaghi alla riga intera
-                                        handleDeleteBooking(booking.id, selectedRoom, selectedRoom === "Robinie" ? booking.roomType : "appartamento");
-                                    }}
-                                >
-                                    Cancella
-                                </button>
-
-
+                                <span className="booking-field">
+                                    <img src={check_out_icon} alt="Fine soggiorno" className="icon" />
+                                    {formatDate(booking.stayEndDate)}
+                                </span>
+                                <span className="booking-field">
+                                    <img src={person_icon} alt="Persone" className="icon" />
+                                    {numberOfGuests}
+                                </span>
+                                <span className="booking-field">
+                                    <img src={tax_icon} alt="Tassa soggiorno" className="icon" />
+                                    {booking.touristTax + " €"}
+                                </span>
+                                <span className="booking-field">
+                                    <img src={money_icon} alt="Costo totale" className="icon" />
+                                    {booking.stayCost}
+                                </span>
+                                {selectedRoom === "Robinie" && (
+                                    <span className="booking-field">
+                                        <img src={room_icon} alt="Camera" className="icon" />
+                                        {booking.roomType}
+                                    </span>
+                                )}
+                                <div className="booking-actions">
+                                    <button className="edit-button">Modifica</button>
+                                    <button
+                                        className="delete-button"
+                                        onClick={(event) => {
+                                            event.stopPropagation(); // 🔹 Evita che il click si propaghi alla riga intera
+                                            handleDeleteBooking(booking.id, selectedRoom, selectedRoom === "Robinie" ? booking.roomType : "appartamento");
+                                        }}
+                                    >
+                                        Cancella
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
         </div>

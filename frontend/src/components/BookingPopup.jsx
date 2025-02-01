@@ -1,16 +1,24 @@
 import React, { useState, useEffect } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const BookingPopup = ({ selectedDate, setShowPopup, selectedRoom, setBookings, bookings }) => {
-    const initialBookingData = {
+    const initialGuestData = {
         firstName: "",
         lastName: "",
-        birthDate: "",
-        stayEndDate: "",
+        birthDate: null,
         exemption: "nessuna",
+    };
+
+    const [guests, setGuests] = useState([initialGuestData, initialGuestData]);
+    const [currentGuestIndex, setCurrentGuestIndex] = useState(0);
+
+    const initialBookingData = {
+        stayEndDate: null,
         touristTax: 0,
         stayCost: "",
         bookingSource: "booking",
-        roomType: "",
+        roomType: selectedRoom === "Robinie" ? "" : "appartamento", // 🔹 Se Cremera, imposta direttamente il tipo stanza
     };
 
     const [bookingData, setBookingData] = useState(initialBookingData);
@@ -19,7 +27,7 @@ const BookingPopup = ({ selectedDate, setShowPopup, selectedRoom, setBookings, b
 
     useEffect(() => {
         validateForm();
-    }, [bookingData]);
+    }, [guests, bookingData]);
 
     useEffect(() => {
         if (selectedDate && bookings) {
@@ -27,29 +35,24 @@ const BookingPopup = ({ selectedDate, setShowPopup, selectedRoom, setBookings, b
         }
     }, [selectedDate, bookings]);
 
-
     const validateForm = () => {
-        const { firstName, lastName, birthDate, stayEndDate, stayCost, roomType } = bookingData;
-        setIsFormValid(
-            firstName.trim() !== "" &&
-            lastName.trim() !== "" &&
-            birthDate &&
-            stayEndDate &&
-            roomType !== "" &&
-            /^\d*\.?\d{0,2} €$/.test(stayCost.trim())
+        const isGuestValid = (guest) =>
+            guest.firstName.trim() !== "" && guest.lastName.trim() !== "" && guest.birthDate;
+
+        const atLeastOneGuestValid = guests.some(isGuestValid);
+        const noPartialGuests = guests.every(
+            (guest) =>
+                (guest.firstName.trim() === "" && guest.lastName.trim() === "" && !guest.birthDate) ||
+                isGuestValid(guest)
         );
-    };
 
-    const calculateTouristTax = () => {
-        const { exemption, birthDate, stayEndDate } = bookingData;
-        const age = birthDate ? new Date().getFullYear() - new Date(birthDate).getFullYear() : null;
-        const nights = stayEndDate ? (new Date(stayEndDate) - new Date(selectedDate)) / (1000 * 60 * 60 * 24) : 0;
-
-        if (exemption === "Residente" || exemption === "Clinica Guarnieri" || exemption === "Forze dell'Ordine" || (age !== null && (age < 10 || age > 65))) {
-            return 0;
-        }
-        if (nights === 0) return 0;
-        return (nights * 6) - 0.25;
+        setIsFormValid(
+            atLeastOneGuestValid &&
+            noPartialGuests &&
+            bookingData.stayEndDate &&
+            (selectedRoom === "Robinie" ? bookingData.roomType !== "" : true) && // 🔹 Se Cremera, non richiede roomType
+            /^\d*\.?\d{0,2} \u20AC$/.test(bookingData.stayCost.trim())
+        );
     };
 
     const checkRoomAvailability = () => {
@@ -64,7 +67,6 @@ const BookingPopup = ({ selectedDate, setShowPopup, selectedRoom, setBookings, b
             checkOutDate.setDate(checkOutDate.getDate() - 1);
             checkInDate.setDate(checkInDate.getDate() - 1);
 
-            // Se il giorno selezionato è all'interno di una prenotazione esistente
             if (selectedDate >= checkInDate && selectedDate < checkOutDate) {
                 if (booking.roomType === "Trevi") treviOccupied = true;
                 if (booking.roomType === "S.Peter") speterOccupied = true;
@@ -72,27 +74,75 @@ const BookingPopup = ({ selectedDate, setShowPopup, selectedRoom, setBookings, b
         });
 
         setDisabledRooms({ Trevi: treviOccupied, SPeter: speterOccupied });
-
-        // Debug: controlla se i bottoni vengono disabilitati correttamente
-        console.log("🔹 Stato disabledRooms aggiornato:", { Trevi: treviOccupied, SPeter: speterOccupied });
     };
 
-    const handleInputChange = (e) => {
+    const handleGuestInputChange = (e) => {
         const { name, value } = e.target;
-        setBookingData({ ...bookingData, [name]: value });
+        setGuests((prevGuests) => {
+            const updatedGuests = [...prevGuests];
+            updatedGuests[currentGuestIndex] = { ...updatedGuests[currentGuestIndex], [name]: value };
+            return updatedGuests;
+        });
+    };
+
+    const handleGuestDateChange = (date) => {
+        setGuests((prevGuests) => {
+            const updatedGuests = [...prevGuests];
+            updatedGuests[currentGuestIndex] = { ...updatedGuests[currentGuestIndex], birthDate: date };
+            return updatedGuests;
+        });
+    };
+
+    const handleExemptionChange = (e) => {
+        const { value } = e.target;
+        setGuests((prevGuests) => {
+            const updatedGuests = [...prevGuests];
+            updatedGuests[currentGuestIndex] = { ...updatedGuests[currentGuestIndex], exemption: value };
+            return updatedGuests;
+        });
+    };
+
+    const handleGuestSwitch = (index) => {
+        setCurrentGuestIndex(index);
+    };
+
+    const calculateTouristTax = () => {
+        const calculateTaxForGuest = (guest) => {
+            if (!guest.firstName || !guest.lastName || !guest.birthDate) return 0;
+
+            const age = new Date().getFullYear() - new Date(guest.birthDate).getFullYear();
+            const nights = bookingData.stayEndDate
+                ? (new Date(bookingData.stayEndDate) - new Date(selectedDate)) / (1000 * 60 * 60 * 24)
+                : 0;
+
+            if (guest.exemption === "Residente" || guest.exemption === "Clinica Guarnieri" || guest.exemption === "Forze dell'Ordine" || age < 10 || age > 65) {
+                return 0;
+            }
+            return nights > 0 ? nights * 6 : 0;
+        };
+
+        return calculateTaxForGuest(guests[0]) + calculateTaxForGuest(guests[1]);
     };
 
     const handleSaveBooking = async () => {
-        const dateKey = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000)
-            .toISOString()
-            .split('T')[0];
+        const formatDateForDatabase = (date) => {
+            if (!date) return null;
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const day = String(date.getDate()).padStart(2, "0");
+            return `${year}-${month}-${day}`;
+        };
 
+        const dateKey = formatDateForDatabase(selectedDate);
         const room = selectedRoom;
-        const subRoom = room === "Robinie" ? bookingData.roomType : "appartamento";
+        const subRoom = selectedRoom === "Robinie" ? bookingData.roomType : "appartamento";
 
         const bookingPayload = {
             ...bookingData,
             touristTax: calculateTouristTax(),
+            birthDate: guests.map((g) => formatDateForDatabase(g.birthDate)),
+            stayEndDate: formatDateForDatabase(bookingData.stayEndDate),
+            guests,
         };
 
         try {
@@ -105,7 +155,7 @@ const BookingPopup = ({ selectedDate, setShowPopup, selectedRoom, setBookings, b
             const result = await response.json();
             if (result.success) {
                 alert("Prenotazione salvata con successo!");
-                setBookings(prevBookings => [...prevBookings, { id: dateKey, ...bookingPayload }]);
+                setBookings((prevBookings) => [...prevBookings, { id: dateKey, ...bookingPayload }]);
                 setShowPopup(false);
             } else {
                 alert("Errore nel salvataggio: " + result.message);
@@ -116,17 +166,50 @@ const BookingPopup = ({ selectedDate, setShowPopup, selectedRoom, setBookings, b
         }
     };
 
+    const handleClosePopup = () => {
+        setShowPopup(false);
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setGuests(prevGuests => {
+            const updatedGuests = [...prevGuests];
+            updatedGuests[currentGuestIndex] = { ...updatedGuests[currentGuestIndex], [name]: value };
+            return updatedGuests;
+        });
+    };
+
+
     return (
         <div className="popup-overlay">
             <div className="popup">
                 <h3>Prenotazione per il {selectedDate.toLocaleDateString()}</h3>
+
                 <div className="name-fields">
-                    <input type="text" name="firstName" placeholder="Nome" value={bookingData.firstName} onChange={handleInputChange} />
-                    <input type="text" name="lastName" placeholder="Cognome" value={bookingData.lastName} onChange={handleInputChange} />
+                    <input type="text" name="firstName" placeholder="Nome" value={guests[currentGuestIndex].firstName} onChange={handleGuestInputChange} />
+                    <input type="text" name="lastName" placeholder="Cognome" value={guests[currentGuestIndex].lastName} onChange={handleGuestInputChange} />
                 </div>
 
                 <label>Data di nascita</label>
-                <input type="date" name="birthDate" value={bookingData.birthDate} onChange={handleInputChange} />
+                <DatePicker
+                    selected={guests[currentGuestIndex].birthDate}
+                    onChange={handleGuestDateChange}
+                    dateFormat="dd/MM/yyyy"
+                    placeholderText="Seleziona una data"
+                    className="custom-datepicker"
+                    showYearDropdown
+                    scrollableYearDropdown
+                    yearDropdownItemNumber={100}
+                    minDate={new Date(1900, 0, 1)}
+                    maxDate={new Date()}
+                />
+
+                <div className="guest-switch-container">
+                    <button className={`guest-button ${currentGuestIndex === 0 ? "active" : ""}`} onClick={() => handleGuestSwitch(0)}>Ospite 1</button>
+
+                    <button className={`guest-button ${currentGuestIndex === 1 ? "active" : ""}`} onClick={() => handleGuestSwitch(1)}>Ospite 2</button>
+
+                </div>
 
                 {selectedRoom === "Robinie" && (
                     <div className="room-selection">
@@ -151,10 +234,16 @@ const BookingPopup = ({ selectedDate, setShowPopup, selectedRoom, setBookings, b
                 )}
 
                 <label>Data di fine soggiorno</label>
-                <input type="date" name="stayEndDate" value={bookingData.stayEndDate} onChange={handleInputChange} />
+                <DatePicker
+                    selected={bookingData.stayEndDate}
+                    onChange={(date) => setBookingData({ ...bookingData, stayEndDate: date })}
+                    dateFormat="dd/MM/yyyy"
+                    placeholderText="Seleziona una data"
+                    className="custom-datepicker"
+                />
 
                 <label>Esenzione</label>
-                <select name="exemption" value={bookingData.exemption} onChange={handleInputChange}>
+                <select value={guests[currentGuestIndex].exemption} onChange={handleExemptionChange}>
                     <option value="nessuna">Nessuna esenzione</option>
                     <option value="Residente">Residente</option>
                     <option value="Clinica Guarnieri">Clinica Guarnieri</option>
@@ -187,7 +276,7 @@ const BookingPopup = ({ selectedDate, setShowPopup, selectedRoom, setBookings, b
                 </select>
 
                 <button onClick={handleSaveBooking} disabled={!isFormValid} className={`save-button ${!isFormValid ? 'disabled' : ''}`}>Salva Prenotazione</button>
-                <button onClick={() => setShowPopup(false)}>Chiudi</button>
+                <button onClick={handleClosePopup}>Chiudi</button>
             </div>
         </div>
     );
