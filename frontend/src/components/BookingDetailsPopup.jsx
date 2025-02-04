@@ -10,48 +10,34 @@ const BookingDetailsPopup = ({ selectedBooking, setSelectedBooking, selectedRoom
         return date.toLocaleDateString("it-IT", { day: "2-digit", month: "2-digit", year: "numeric" });
     };
 
+    // 🔹 Numero massimo di ospiti da mostrare
+    const maxGuests = selectedRoom === "Cremera" ? 4 : 2;
+
     return (
         <div className="popup-overlay">
             <div className="popup popup-readonly">
                 <h3>Dettagli prenotazione</h3>
 
-                {/* 🔹 Dati del primo ospite */}
-                {selectedBooking.guests && selectedBooking.guests[0] && (
-                    <>
-                        <div className="guest-container">
-                            <h4>Ospite 1</h4>
-                            <div className="name-fields">
-                                <input type="text" value={selectedBooking.guests[0].firstName || ""} readOnly disabled />
-                                <input type="text" value={selectedBooking.guests[0].lastName || ""} readOnly disabled />
+                {/* 🔹 Mostra dinamicamente fino a `maxGuests` ospiti */}
+                {selectedBooking.guests &&
+                    selectedBooking.guests.slice(0, maxGuests).map((guest, index) => (
+                        guest.firstName.trim() !== "" && guest.lastName.trim() !== "" && (
+                            <div key={index} className="guest-container">
+                                <h4>Ospite {index + 1}</h4>
+                                <div className="name-fields">
+                                    <input type="text" value={guest.firstName || ""} readOnly disabled />
+                                    <input type="text" value={guest.lastName || ""} readOnly disabled />
+                                </div>
+
+                                <label>Data di nascita</label>
+                                <input type="text" value={formatDate(guest.birthDate)} readOnly disabled />
+
+                                <label>Esenzione</label>
+                                <input type="text" value={guest.exemption || "Nessuna"} readOnly disabled />
                             </div>
-
-                            <label>Data di nascita</label>
-                            <input type="text" value={formatDate(selectedBooking.guests[0].birthDate)} readOnly disabled />
-
-                            <label>Esenzione</label>
-                            <input type="text" value={selectedBooking.guests[0].exemption || "Nessuna"} readOnly disabled />
-                        </div>
-                    </>
-                )}
-
-                {/* 🔹 Dati del secondo ospite (se presente) */}
-                {selectedBooking.guests && selectedBooking.guests[1] && selectedBooking.guests[1].firstName !== "" && (
-                    <>
-                        <div className="guest-container">
-                            <h4>Ospite 2</h4>
-                            <div className="name-fields">
-                                <input type="text" value={selectedBooking.guests[1].firstName || ""} readOnly disabled />
-                                <input type="text" value={selectedBooking.guests[1].lastName || ""} readOnly disabled />
-                            </div>
-
-                            <label>Data di nascita</label>
-                            <input type="text" value={formatDate(selectedBooking.guests[1].birthDate)} readOnly disabled />
-
-                            <label>Esenzione</label>
-                            <input type="text" value={selectedBooking.guests[1].exemption || "Nessuna"} readOnly disabled />
-                        </div>
-                    </>
-                )}
+                        )
+                    ))
+                }
 
                 {/* 🔹 Dati generali della prenotazione */}
                 <label>Data di inizio soggiorno</label>

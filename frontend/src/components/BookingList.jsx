@@ -6,7 +6,7 @@ import person_icon from "../assets/person_icon.png";
 import tax_icon from "../assets/tax_icon.png";
 import room_icon from "../assets/room_icon.png";
 
-const BookingList = ({ bookings, selectedRoom, setSelectedBooking, handleDeleteBooking }) => {
+const BookingList = ({ bookings, selectedRoom, setSelectedBooking, handleDeleteBooking, setEditingBooking, setShowPopup }) => {
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleDateString("it-IT", { day: "2-digit", month: "2-digit" });
@@ -19,17 +19,19 @@ const BookingList = ({ bookings, selectedRoom, setSelectedBooking, handleDeleteB
             ) : (
                 <div className="booking-list">
                     {bookings.map((booking) => {
+                        const checkInDate = booking.realCheckIn ? formatDate(booking.realCheckIn) : formatDate(booking.id);
                         // 🔹 Verifica il numero di ospiti basandosi sui campi firstName
-                        const numberOfGuests = booking.guests && 
-                            booking.guests.length === 2 &&
-                            booking.guests[0].firstName.trim() !== "" &&
-                            booking.guests[1].firstName.trim() !== "" ? 2 : 1;
+                        // 🔹 Contare gli ospiti validi
+                        const maxGuests = selectedRoom === "Cremera" ? 4 : 2; // Cremera: max 4, Robinie: max 2
+                        const numberOfGuests = booking.guests
+                            ? booking.guests.slice(0, maxGuests).filter(guest => guest.firstName.trim() !== "" && guest.lastName.trim() !== "").length
+                            : 0;
 
                         return (
                             <div key={booking.id} className="booking-row" onClick={() => setSelectedBooking(booking)}>
                                 <span className="booking-field">
                                     <img src={check_in_icon} alt="Data" className="icon" />
-                                    {formatDate(booking.id)}
+                                    {checkInDate}
                                 </span>
                                 <span className="booking-field">
                                     <img src={check_out_icon} alt="Fine soggiorno" className="icon" />
@@ -54,7 +56,16 @@ const BookingList = ({ bookings, selectedRoom, setSelectedBooking, handleDeleteB
                                     </span>
                                 )}
                                 <div className="booking-actions">
-                                    <button className="edit-button">Modifica</button>
+                                    <button
+                                        className="edit-button"
+                                        onClick={(event) => {
+                                            event.stopPropagation(); // 🔹 Evita la selezione accidentale dell'intera riga
+                                            setEditingBooking(booking); // 🔹 Imposta la prenotazione da modificare
+                                            setShowPopup(true); // 🔹 Mostra il popup
+                                        }}
+                                    >
+                                        Modifica
+                                    </button>
                                     <button
                                         className="delete-button"
                                         onClick={(event) => {

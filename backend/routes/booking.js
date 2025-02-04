@@ -1,5 +1,5 @@
 const express = require("express");
-const { saveBooking, getBookings, deleteBooking } = require("../services/bookingService");
+const { saveBooking, getBookings, deleteBooking, editBooking } = require("../services/bookingService");
 
 const router = express.Router();
 
@@ -63,6 +63,32 @@ router.delete("/delete", async (req, res) => {
         console.error("❌ Errore nella cancellazione della prenotazione:", error);
         return res.status(500).json({ success: false, message: "Errore del server" });
     }
+});
+
+// Endpoint per aggiornare una prenotazione esistente
+router.put("/update", async (req, res) => {
+  console.log("🟡 PUT ricevuta con dati:", req.body);
+
+  const { room, subRoom, date, bookingData } = req.body;
+
+  if (!room || !subRoom || !date || !bookingData) {
+    console.log("❌ Parametri mancanti in PUT!");
+    return res.status(400).json({ success: false, message: "Dati insufficienti per l'aggiornamento" });
+  }
+
+  try {
+    const result = await editBooking(room, subRoom, date, bookingData, true);
+    console.log("🔹 Risultato aggiornamento:", result);
+
+    if (result.success) {
+      return res.status(200).json(result);
+    } else {
+      return res.status(400).json(result);
+    }
+  } catch (error) {
+    console.error("❌ Errore nell'aggiornamento:", error);
+    return res.status(500).json({ success: false, message: "Errore del server" });
+  }
 });
 
 

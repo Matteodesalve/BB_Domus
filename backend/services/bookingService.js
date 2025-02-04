@@ -83,6 +83,44 @@ const getBookings = async (room, subRoom, selectedMonth) => {
   }
 };
 
+const editBooking = async (room, subRoom, date, bookingData) => {
+    try {
+        // Estrarre anno e mese dalla data
+        const [year, month] = date.split("-").map(Number);
+        const monthString = `${year}-${String(month).padStart(2, "0")}`; // Esempio: "2025-01"
+
+        // Verifica che room e subRoom siano validi
+        if (
+            (room === "Robinie" && (subRoom === "Trevi" || subRoom === "S.Peter")) ||
+            (room === "Cremera" && subRoom === "appartamento")
+        ) {
+            // 🔹 Percorso Firestore corretto: "prenotazioni/Robinie/S.Peter/2025-01"
+            const bookingRef = db.collection("prenotazioni")
+                .doc(room)                     // "Robinie" o "Cremera"
+                .collection(subRoom)            // "Trevi", "S.Peter" o "appartamento"
+                .doc(monthString)               // "2025-01"
+                .collection("giorni")           // Sotto-collezione per evitare problemi con documenti vuoti
+                .doc(date);                     // "2025-01-01"
+
+            // Controlla se la prenotazione esiste
+            const existingDoc = await bookingRef.get();
+            if (!existingDoc.exists) {
+                return { success: false, message: "La prenotazione non esiste." };
+            }
+
+            // 🔹 Aggiorna la prenotazione
+            await bookingRef.update(bookingData);
+            console.log(`✅ Prenotazione modificata con successo: ${date}`);
+            return { success: true, message: "Prenotazione modificata con successo" };
+        } else {
+            return { success: false, message: "Tipo di stanza non valido" };
+        }
+    } catch (error) {
+        console.error("❌ Errore durante la modifica della prenotazione:", error);
+        return { success: false, message: error.message };
+    }
+};
+
 
 
 // Funzione per eliminare una prenotazione
@@ -129,4 +167,4 @@ const deleteBooking = async (room, subRoom, bookingId) => {
 };
 
 
-module.exports = { saveBooking, getBookings, deleteBooking };
+module.exports = { saveBooking, getBookings, deleteBooking, editBooking };

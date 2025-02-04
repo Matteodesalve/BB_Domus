@@ -17,6 +17,8 @@ const SummarySection = () => {
     const [isFetching, setIsFetching] = useState(false);
     const [fetchTimestamp, setFetchTimestamp] = useState(0);
 
+    const [editingBooking, setEditingBooking] = useState(null);
+
     const [calendarKey, setCalendarKey] = useState(0);
 
     useEffect(() => {
@@ -142,6 +144,8 @@ const SummarySection = () => {
                 selectedRoom={selectedRoom}
                 setSelectedBooking={setSelectedBooking}
                 handleDeleteBooking={handleDeleteBooking}
+                setEditingBooking={setEditingBooking} // 🔹 Passa lo stato
+                setShowPopup={setShowPopup} // 🔹 Per aprire il popup
             />
 
             {showPopup && (
@@ -151,6 +155,10 @@ const SummarySection = () => {
                     selectedRoom={selectedRoom}
                     setBookings={setBookings}
                     bookings={bookings}
+                    fetchBookings={fetchBookings}
+                    selectedMonth={selectedMonth}
+                    editingBooking={editingBooking} // 🔹 Passiamo la prenotazione da modificare
+                    setEditingBooking={setEditingBooking} // 🔹 Permette di resettare dopo il salvataggio
                 />
             )}
 
