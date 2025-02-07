@@ -45,6 +45,31 @@ const BookingPopup = ({ selectedDate, setShowPopup, selectedRoom, setBookings, b
     });
     const [isFormValid, setIsFormValid] = useState(false);
     const [disabledRooms, setDisabledRooms] = useState({ Trevi: false, SPeter: false });
+    
+    const calculateTouristTax = () => {
+        const calculateTaxForGuest = (guest) => {
+            if (!guest.firstName || !guest.lastName || !guest.birthDate) return 0;
+
+            const age = new Date().getFullYear() - new Date(guest.birthDate).getFullYear();
+            const nights = bookingData.stayEndDate
+                ? Math.round((new Date(bookingData.stayEndDate) - new Date(selectedDate)) / (1000 * 60 * 60 * 24)) // ✅ FIX: Arrotonda
+                : 0;
+
+            console.log(`🟢 Notti calcolate (FIXED): ${nights}`);
+
+            if (guest.exemption === "Residente" || guest.exemption === "Clinica Guarnieri" || guest.exemption === "Forze dell'Ordine" || age < 10 || age > 65) {
+                return 0;
+            }
+
+            return nights > 0 ? nights * 6 : 0;
+        };
+
+        const totalTax = guests.slice(0, numGuests).reduce((total, guest) => total + calculateTaxForGuest(guest), 0);
+
+        console.log(`🟢 Tassa totale calcolata (FIXED): ${totalTax}`);
+
+        return Number(totalTax.toFixed(2)); // 🔹 Arrotonda sempre a due decimali
+    };
 
     const [touristTaxState, setTouristTaxState] = useState(editingBooking ? editingBooking.touristTax : calculateTouristTax());
 
@@ -140,30 +165,7 @@ const BookingPopup = ({ selectedDate, setShowPopup, selectedRoom, setBookings, b
         setCurrentGuestIndex(parseInt(e.target.value, 10));
     };
 
-    const calculateTouristTax = () => {
-        const calculateTaxForGuest = (guest) => {
-            if (!guest.firstName || !guest.lastName || !guest.birthDate) return 0;
 
-            const age = new Date().getFullYear() - new Date(guest.birthDate).getFullYear();
-            const nights = bookingData.stayEndDate
-                ? Math.round((new Date(bookingData.stayEndDate) - new Date(selectedDate)) / (1000 * 60 * 60 * 24)) // ✅ FIX: Arrotonda
-                : 0;
-
-            console.log(`🟢 Notti calcolate (FIXED): ${nights}`);
-
-            if (guest.exemption === "Residente" || guest.exemption === "Clinica Guarnieri" || guest.exemption === "Forze dell'Ordine" || age < 10 || age > 65) {
-                return 0;
-            }
-
-            return nights > 0 ? nights * 6 : 0;
-        };
-
-        const totalTax = guests.slice(0, numGuests).reduce((total, guest) => total + calculateTaxForGuest(guest), 0);
-
-        console.log(`🟢 Tassa totale calcolata (FIXED): ${totalTax}`);
-
-        return Number(totalTax.toFixed(2)); // 🔹 Arrotonda sempre a due decimali
-    };
 
 
 

@@ -18,6 +18,7 @@ const BookingList = ({ bookings, selectedRoom, setSelectedBooking, handleDeleteB
                 <p className="no-bookings">Nessuna prenotazione per questo mese.</p>
             ) : (
                 <div className="booking-list">
+                    <h2>Prenotazioni del mese</h2>
                     {bookings.map((booking) => {
                         const checkInDate = booking.realCheckIn ? formatDate(booking.realCheckIn) : formatDate(booking.id);
                         // 🔹 Verifica il numero di ospiti basandosi sui campi firstName

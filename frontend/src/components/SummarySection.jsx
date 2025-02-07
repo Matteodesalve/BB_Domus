@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // ✅ Import corretto
+import { MdHome } from "react-icons/md"; // 🔹 Import icona moderna
 import RoomSelection from "./RoomSelection";
 import MonthSelection from "./MonthSelection";
 import BookingCalendar from "./BookingCalendar";
 import BookingList from "./BookingList";
 import BookingPopup from "./BookingPopup";
 import BookingDetailsPopup from "./BookingDetailsPopup";
+import MonthlySummary from "./MonthlySummary";
 import "./SummarySection.css";
 
 const SummarySection = () => {
@@ -16,6 +19,13 @@ const SummarySection = () => {
     const [selectedBooking, setSelectedBooking] = useState(null);
     const [isFetching, setIsFetching] = useState(false);
     const [fetchTimestamp, setFetchTimestamp] = useState(0);
+
+    const navigate = useNavigate();
+
+    const [monthlySummary, setMonthlySummary] = useState({
+        totalTax: 0,
+        totalCost: 0,
+    });
 
     const [editingBooking, setEditingBooking] = useState(null);
 
@@ -62,6 +72,26 @@ const SummarySection = () => {
             setIsFetching(false);
         }
     };
+
+    useEffect(() => {
+        const calculateSummary = () => {
+            let totalTax = 0;
+            let totalCost = 0;
+
+            bookings.forEach(booking => {
+                totalTax += booking.touristTax || 0;
+                const costValue = parseFloat(booking.stayCost.replace(/\D/g, ""));
+                totalCost += isNaN(costValue) ? 0 : costValue;
+            });
+
+            setMonthlySummary({
+                totalTax,
+                totalCost,
+            });
+        };
+
+        calculateSummary();
+    }, [bookings]);
 
     useEffect(() => {
         if (!showPopup) {
@@ -124,6 +154,10 @@ const SummarySection = () => {
 
     return (
         <div className="summary-container">
+            {/* 🔹 Bottone Home in alto a sinistra */}
+            <button className="home-button" onClick={() => navigate("/")}>
+                <MdHome size={28} />
+            </button>
             <h2>Seleziona la camera</h2>
             <RoomSelection selectedRoom={selectedRoom} onSelectRoom={handleRoomSelection} />
 
@@ -138,7 +172,6 @@ const SummarySection = () => {
                 selectedRoom={selectedRoom}
             />
 
-            <h2>Prenotazioni del mese</h2>
             <BookingList
                 bookings={bookings}
                 selectedRoom={selectedRoom}
@@ -167,6 +200,8 @@ const SummarySection = () => {
                 setSelectedBooking={setSelectedBooking}
                 selectedRoom={selectedRoom}
             />
+
+            <MonthlySummary summary={monthlySummary} />
         </div>
     );
 };

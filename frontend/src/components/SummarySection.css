@@ -16,6 +16,26 @@ body {
     color: #333;
 }
 
+.home-button {
+    position: absolute;
+    top: 5%;
+    left: 6%;
+    background-color: #6b4226; /* Marrone per adattarsi al tema */
+    color: white;
+    font-size: 20px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 20%;
+    cursor: pointer;
+    transition: ease-in-out 0.5s;
+}
+
+.home-button:hover {
+    background-color: #8b5a2b;
+    transition: ease-in-out 0.5s;
+}
+
+
 body.no-scroll {
     overflow: hidden;
 }
@@ -412,11 +432,11 @@ button.active {
 
 /* Contenitore moderno con scrollbar */
 .booking-container {
-    width: 90%;
+    width: 89%;
     height: 300px; /* Altezza fissa con scrollbar */
     background: #fff;
     border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     overflow-y: auto; /* Scroll verticale */
     margin: 20px auto;
     padding: 10px;
@@ -445,7 +465,7 @@ button.active {
 /* Effetto hover */
 .booking-row:hover {
     background: rgba(200, 200, 200, 0.3); /* Grigio chiaro */
-    transform: scale(1.02); /* Effetto di leggero ingrandimento */
+    transform: scale(1.01); /* Effetto di leggero ingrandimento */
     cursor: pointer;
 }
 
@@ -656,5 +676,56 @@ button.active {
 /* Effetto al passaggio del mouse */
 .guest-button:hover {
     transform: scale(1.1);
+}
+.monthly-summary-container {
+    width: 88%;
+    height: 400px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    overflow: hidden; /* Nessuna scrollbar per una divisione pulita */
+    margin: 20px auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.monthly-summary-container h2 {
+    margin-bottom: 50px;
+    color: #333;
+}
+
+.summary-content {
+    display: flex;
+    justify-content: space-between; /* Spazio tra le due sezioni */
+    align-items: center;
+    height: 100%;
+}
+
+/* Sezione Sinistra - Valori */
+.summary-left {
+    width: 50%;
+    padding: 20px;
+}
+
+.summary-left p {
+    font-size: 16px;
+    margin: 5px 0;
+    color: #333;
+}
+
+/* Sezione Destra - Grafici */
+.summary-right {
+    width: 50%;
+    padding: 20px;
+    text-align: center;
+    background: #f8f8f8; /* Sfondo leggero per separare la sezione */
+    border-radius: 10px;
+    height: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    color: #777;
 }
 
