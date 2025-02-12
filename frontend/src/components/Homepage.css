@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Domine:wght@400..700&family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&display=swap');
 
 
-body {
+/*body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
@@ -26,31 +26,51 @@ body {
     width: 100%;
     height: 100%;
     background: url("/Domus-Mariani_74_9022.jpg") no-repeat center center/cover;
-    filter: blur(2px);
+    filter: blur(5px);
     z-index: -1;
-  }
+  } */
   
   .home-container {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: rgba(255, 239, 221, 0.9);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 30px;
-    padding: 20px;
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
-  h1 {
-    font-size: 32px;
-    color: #333;
-    margin: 0;
+    min-height: 100vh;
+    width: 100vw;
+    text-align: center;
+    overflow-x: hidden;
+    overflow-y: auto;
     position: relative;
+  }
+
+  .home-container::before {
+    content: "";
+    position: absolute;
     top: 0;
     left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("/Domus-Mariani_74_9022.jpg") no-repeat center center/cover;
+    filter: blur(5px);
+    z-index: -1;
+  }
+
+  .home-container img {
+    width: 12%;
+  }
+  
+  .home-title {
+    font-size: 65px;
+    color: #333;
+    position: relative;
+    bottom: 50px;
+    left: 0;
     transform: none;
-    font-family: "Cinzel Decorative", serif;
+    font-family: "Times New Roman", serif;
   }
   
   .card-container {
@@ -59,6 +79,7 @@ body {
     justify-content: center;
     gap: 30px;
     width: 100%;
+    margin-bottom: 20px; /* Ridotto rispetto a prima */
   }
   
   .card {
@@ -126,9 +147,11 @@ body {
     border-radius: 10px;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.3s ease;
-    margin-top: 20px;
     font-family: "Playfair", serif;
-  }
+    margin-top: 20px; /* Diminuito il margine superiore per alzarlo */
+    margin-bottom: 8%;
+}
+
   
   .logout-button:hover {
     background: rgb(132, 103, 72);

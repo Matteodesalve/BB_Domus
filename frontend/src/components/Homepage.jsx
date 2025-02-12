@@ -4,6 +4,7 @@ import "./Homepage.css";
 import summaryIcon from "../assets/summary_icon.png";
 import cashIcon from "../assets/icon_cash.png";
 import archiveIcon from "../assets/archivio_icon.png";
+import DomusLogo from "../assets/logo_domus.png";
 
 const HomePage = () => {
   const [hoveredCard, setHoveredCard] = useState(null);
@@ -62,7 +63,8 @@ const HomePage = () => {
 
   return (
     <div className="home-container">
-      <h1>Benvenuto nella Home!</h1>
+      <img src={DomusLogo} alt="" />
+      <p className="home-title">Benvenuto nella Home!</p>
       <div className="card-container">
         {cards.map((card) => (
           <div

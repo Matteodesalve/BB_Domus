@@ -7,8 +7,32 @@ body {
 
 /* Miglioramenti generali */
 .summary-container {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: rgba(255, 239, 221, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    width: 100vw;
     text-align: center;
-    padding: 20px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: relative;
+}
+
+.summary-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("/domus_summary.jpg") no-repeat center center/cover;
+    filter: blur(5px);
+    z-index: -1;
 }
 
 .summary-container h2 {
@@ -20,7 +44,7 @@ body {
     position: absolute;
     top: 5%;
     left: 6%;
-    background-color: #6b4226; /* Marrone per adattarsi al tema */
+    background: rgb(62, 56, 49); /* Marrone per adattarsi al tema */
     color: white;
     font-size: 20px;
     padding: 10px 15px;
@@ -31,7 +55,7 @@ body {
 }
 
 .home-button:hover {
-    background-color: #8b5a2b;
+    background: #b69982;
     transition: ease-in-out 0.5s;
 }
 
@@ -71,7 +95,7 @@ button:focus, button:hover, button:active {
 
 /* Effetto hover */
 button:hover {
-    background: linear-gradient(135deg, #9a7353, #8a5f3d);
+    background: rgb(62, 56, 49);
     transition: 0.3s ease-in-out;
     transform: translateY(-2px);
 }
@@ -83,7 +107,7 @@ button:active {
 
 /* Stile attivo (bottone selezionato, es. Gennaio di default) */
 button.active {
-    background: linear-gradient(135deg, #7b4f33, #5e3822);
+    background: rgb(62, 56, 49);
     color: #fff;
     transform: translateY(-2px);
 }

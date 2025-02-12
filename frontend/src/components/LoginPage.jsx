@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./LoginPage.css";
 import { useNavigate } from "react-router-dom";
+import DomusLogo from "../assets/logo_domus.png";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
@@ -33,7 +34,8 @@ const LoginPage = () => {
     <div className="login-page">
       <div className="login-form-container">
         <form className="login-form" onSubmit={handleLogin}>
-          <h2>Accedi</h2>
+          <img src={DomusLogo} alt="" />
+          <h2>ACCEDI</h2>
           <input
             type="text"
             placeholder="Username"
