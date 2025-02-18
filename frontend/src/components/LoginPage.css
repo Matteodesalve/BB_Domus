@@ -6,7 +6,7 @@
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background: rgba(255, 239, 221, 0.9);
+    background: rgba(225, 212, 194, 0.89);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -34,7 +34,7 @@
 /* Contenitore del form */
 .login-form-container {
     position: relative;
-    background: rgba(245, 235, 224, 0.9); /* Colore #f5ebe0 con trasparenza */
+    background: #E1D4C2; /* Colore #f5ebe0 con trasparenza */
     padding: 1rem 1rem 3rem;  /* Non toccato */
     border-radius: 16px;      /* Non toccato */
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
@@ -47,9 +47,11 @@
     /* Mantenendo flex, ma il contenuto parte dall'alto */
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; /* da center a flex-start */
+    justify-content: center; /* da center a flex-start */
     align-items: center;
 }
+
+
 
 .login-page img{
     width: 70%;
@@ -65,43 +67,20 @@
     font-size: 1.5rem;
     font-family: "Cinzel Decorative", serif;
     font-weight: bold;
-    color: #333;
-}
-
-
-.login-form input {
-    width: 80%;
-    padding: 0.8rem;
-    font-size: 1rem;
-    font-family: "Domine", "serif";
-    border: 2px solid #d6ccc2;
-    border-radius: 8px;
-    outline: none;
-    background-color: #edede9;
-    color: #333;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    margin-bottom: 1rem; /* Aggiunta di spazio tra un input e l’altro */
-}
-
-
-/* Effetto al focus */
-.login-form input:focus {
-    border-color: #d6ccc2; /* Colore #d6ccc2 */
-    box-shadow: 0 0 8px rgba(214, 204, 194, 0.5); /* Luminosità al focus */
+    color: #291c0e;
 }
 
 /* Stile del bottone */
 .login-form button {
     margin-top: 1rem;
     width: 30%; /* Adattato alla larghezza del form */
-    height: 20%;
+    padding: 10px 0; /* Aggiunto padding per altezza proporzionata */
     text-align: center;
-    font-size: 1rem;
-    font-family: "Playfair", "serif";
+    font-size: 20px;
+    font-family: "Playfair", serif;
     font-weight: bold;
     color: #fff;
-    background: rgb(62, 56, 49); /* Colore principale #d6ccc2 */
+    background: #291c0e;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -110,11 +89,12 @@
 
 /* Effetto al hover */
 .login-form button:hover {
-    background: rgb(184, 151, 116); /* Cambia colore al hover */
-    color: #333; /* Cambia colore del testo */
-    transform: scale(1.05); /* Leggero zoom */
-    box-shadow: 0 4px 15px rgba(214, 204, 194, 0.3); /* Ombreggiatura più visibile */
+    background: #6e473b;
+    color: white;
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(214, 204, 194, 0.3);
 }
+
 
 /* Effetto al click */
 .login-form button:active {
@@ -128,4 +108,48 @@
     color: #e63946; /* Rosso chiaro per messaggi di errore */
     font-size: 0.9rem;
     font-weight: bold;
+}
+
+/* Contenitore per ogni input + label */
+.input-container {
+    width: 88%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin-bottom: 1rem;
+}
+
+.input-container label {
+    font-size: 1rem;
+    font-family: "Domine", serif;
+    font-weight: bold;
+    color: #291c0e;
+    margin-bottom: 0.3rem;
+}
+
+/* Stile per input */
+.input-container input {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1rem;
+    font-family: "Domine", serif;
+    border: 2px solid #d6ccc2;
+    border-radius: 8px;
+    outline: none;
+    background-color: #edede9;
+    color: #291c0e;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Stile per l'effetto focus */
+.input-container input:focus {
+    border-color: #d6ccc2;
+    box-shadow: 0 0 8px rgba(214, 204, 194, 0.5);
+}
+
+/* Stile per placeholder visibile solo quando il campo non è attivo */
+.input-container input::placeholder {
+    color: #9c9c9c;
+    font-style: italic;
 }

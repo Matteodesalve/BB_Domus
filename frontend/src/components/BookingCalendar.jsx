@@ -14,45 +14,42 @@ const BookingCalendar = ({ selectedDate, onDayClick, bookings, selectedMonth, se
 
     const getTileClassName = ({ date, view }) => {
         if (view !== "month") return "";
-    
+
         let tileClass = "";
-    
+        let treviOccupied = false;
+        let speterOccupied = false;
+
         bookings.forEach((booking) => {
             const checkInDate = new Date(booking.id);
             const checkOutDate = new Date(booking.stayEndDate);
-    
+
             checkOutDate.setDate(checkOutDate.getDate() - 1);
             checkInDate.setDate(checkInDate.getDate() - 1);
-    
-            // ✅ Controllo avanzato: anche prenotazioni che iniziano il mese scorso e finiscono ora
+
+            // ✅ Controllo se la data è all'interno del range della prenotazione
             if (date >= checkInDate && date <= checkOutDate) {
                 if (selectedRoom === "Robinie") {
-                    if (booking.roomType === "Trevi") tileClass = "red"; 
-                    else if (booking.roomType === "S.Peter") tileClass = "blue";
+                    if (booking.roomType === "Trevi") treviOccupied = true;
+                    if (booking.roomType === "S.Peter") speterOccupied = true;
                 } else if (selectedRoom === "Cremera") {
-                    tileClass = "yellow"; 
-                }
-            }
-    
-            // 🔹 NUOVO: Controllo retroattivo per prenotazioni iniziate nel mese precedente
-            const prevMonth = new Date(date);
-            prevMonth.setMonth(prevMonth.getMonth() - 1);
-    
-            if (checkOutDate.getMonth() === date.getMonth() && checkOutDate.getFullYear() === date.getFullYear()) {
-                if (date >= checkInDate && date <= checkOutDate) {
-                    if (selectedRoom === "Robinie") {
-                        if (booking.roomType === "Trevi") tileClass = "red";
-                        else if (booking.roomType === "S.Peter") tileClass = "blue";
-                    } else if (selectedRoom === "Cremera") {
-                        tileClass = "yellow";
-                    }
+                    tileClass = "yellow";
                 }
             }
         });
-    
+
+        // 🟣 Gestione della sovrapposizione per Robinie (Trevi e S.Peter)
+        if (selectedRoom === "Robinie") {
+            if (treviOccupied && speterOccupied) {
+                tileClass = "half-red-blue"; // Giorno sovrapposto
+            } else if (treviOccupied) {
+                tileClass = "red";
+            } else if (speterOccupied) {
+                tileClass = "blue";
+            }
+        }
+
         return tileClass;
     };
-    
     
 
     const isDayDisabled = ({ date, view }) => {
