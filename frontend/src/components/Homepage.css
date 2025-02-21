@@ -14,7 +14,7 @@
     width: 100vw;
     text-align: center;
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: hidden !important;
     position: relative;
   }
 
@@ -31,13 +31,15 @@
   }
 
   .home-container img {
-    width: 12%;
+    width: 250px;
+    margin-top: 2%;
   }
   
   .home-title {
-    font-size: 65px;
+    font-size: 45px;
     color: #291c0e;
     position: relative;
+    top: 10px;
     bottom: 50px;
     left: 0;
     transform: none;
@@ -120,7 +122,6 @@
     transition: background-color 0.3s ease, transform 0.3s ease;
     font-family: "Playfair", serif;
     margin-top: 20px; /* Diminuito il margine superiore per alzarlo */
-    margin-bottom: 8%;
 }
 
   

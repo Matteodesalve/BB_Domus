@@ -33,7 +33,7 @@ const BookingDetailsPopup = ({ selectedBooking, setSelectedBooking, selectedRoom
                                 <input type="text" value={formatDate(guest.birthDate)} readOnly disabled />
 
                                 <label>Esenzione</label>
-                                <input type="text" value={guest.exemption || "Nessuna"} readOnly disabled />
+                                <input type="text" value={guest.exemption} readOnly disabled />
                             </div>
                         )
                     ))

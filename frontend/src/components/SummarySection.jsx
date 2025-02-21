@@ -25,6 +25,10 @@ const SummarySection = () => {
     const [monthlySummary, setMonthlySummary] = useState({
         totalTax: 0,
         totalCost: 0,
+        numPerson: 0,
+        numNight: 0,
+        numEs: 0,
+        numAir: 0,
     });
 
     const [editingBooking, setEditingBooking] = useState(null);
@@ -35,6 +39,8 @@ const SummarySection = () => {
         // 🔄 Forza il ricaricamento del calendario ogni volta che le prenotazioni cambiano
         setCalendarKey((prevKey) => prevKey + 1);
     }, [bookings, selectedRoom, selectedMonth]);
+
+
 
     const fetchBookings = async (room, subRoom, month) => {
         try {
@@ -60,7 +66,8 @@ const SummarySection = () => {
                     firstName: guest.firstName || "",
                     lastName: guest.lastName || "",
                     birthDate: guest.birthDate ? new Date(guest.birthDate) : null,
-                })) : [{ firstName: "", lastName: "", birthDate: null }, { firstName: "", lastName: "", birthDate: null }],
+                    exemption: guest.exemption || "Nessuna",
+                })) : [{ firstName: "", lastName: "", birthDate: null , exemption: "nessuna"}, { firstName: "", lastName: "", birthDate: null, exemption: "nessuna" }],
             }));
 
             if (timestamp >= fetchTimestamp) {
@@ -73,20 +80,65 @@ const SummarySection = () => {
         }
     };
 
+
     useEffect(() => {
         const calculateSummary = () => {
             let totalTax = 0;
             let totalCost = 0;
+            let numPerson = 0;
+            let numAir = 0;
+            let numEs = 0;
+            let numNight = 0;
 
             bookings.forEach(booking => {
                 totalTax += booking.touristTax || 0;
                 const costValue = parseFloat(booking.stayCost.replace(/\D/g, ""));
                 totalCost += isNaN(costValue) ? 0 : costValue;
+
+                let bookingPersons = 0;
+
+                booking.guests = Array.isArray(booking.guests) ? booking.guests : [];
+
+                console.log("Booking Guests (tipo):", typeof booking.guests);
+                console.log("Booking Guests (contenuto):", booking.guests);
+
+                booking.guests.forEach(guest => {
+                    console.log("Guest:", guest); // 🔹 Verifica il contenuto di ogni guest
+                    if (guest.firstName && guest.firstName.trim() !== "") {
+                        bookingPersons++;
+                        console.log("Persona aggiunta:", bookingPersons);
+                        console.log("Esenzione persona:", guest.exemption);
+
+                        if (guest.exemption && guest.exemption.trim().toLowerCase() !== "nessuna") {
+                            numEs++;
+                            console.log("Esenzione aggiunta, totale:", numEs);
+                        }
+                    }
+                });
+
+                numPerson += bookingPersons;
+
+                if (booking.id && booking.stayEndDate) {
+                    const startDate = new Date(booking.id); // Supponiamo che l'id sia un valore interpretabile come data
+                    const endDate = new Date(booking.stayEndDate);
+                    const nights = Math.max((endDate - startDate) / (1000 * 60 * 60 * 24), 0); // Sottrae 1 giorno
+                    console.log("Notti:", nights);
+                    numNight += nights * bookingPersons;
+                }
+
+                if (booking.bookingSource && booking.bookingSource.toLowerCase() === "airbnb") {
+                    numAir++;
+                }
+
             });
 
             setMonthlySummary({
                 totalTax,
                 totalCost,
+                numPerson,
+                numNight,
+                numEs,
+                numAir,
             });
         };
 

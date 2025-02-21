@@ -42,12 +42,12 @@ body {
 
 .home-button {
     position: absolute;
-    top: 5%;
+    top: 75px;
     left: 6%;
     background: #291C0E; /* Marrone per adattarsi al tema */
     color: white;
     font-size: 20px;
-    padding: 10px 15px;
+    padding: 8px 12px;
     border: none;
     border-radius: 20%;
     cursor: pointer;
@@ -68,16 +68,16 @@ body.no-scroll {
 .room-buttons, .month-buttons {
     display: flex;
     justify-content: center;
-    gap: 15px;
+    gap: 10px;
     margin-bottom: 20px;
     flex-wrap: wrap;
 }
 
 button {
-    padding: 12px 25px;
+    padding: 12px 20px;
     border: none;
     background: #A78D78;
-    color: #fff;
+    color: #291C0E;
     font-weight: bold;
     border-radius: 8px;
     cursor: pointer;
@@ -96,6 +96,7 @@ button:focus, button:hover, button:active {
 /* Effetto hover */
 button:hover {
     background: #291C0E;
+    color: white;
     transition: 0.3s ease-in-out;
     transform: translateY(-2px);
 }
